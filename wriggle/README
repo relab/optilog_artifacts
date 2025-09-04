@@ -1,0 +1,2 @@
+To run the experiment described in figure 11, change hotstuff/backend/server.go line 75, to change the wriggle room. 
+Use the 21 node configuration from experiment 10 to run this experiment.
