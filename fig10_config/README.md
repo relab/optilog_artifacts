@@ -1,3 +1,10 @@
+To build the HotStuff binary, run
+
+```sh
+make install 
+make
+```
+
 Use the following command to setup password-less access from the controller node to all other nodes.
 
 ```sh
