@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+package hotstuffpb;
+
+import "gorums.proto";
+
+import "google/protobuf/empty.proto";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/relab/hotstuff/internal/proto/hotstuffpb";
+
+service Hotstuff {
+  rpc Propose(Proposal) returns (google.protobuf.Empty) {
+    option (gorums.multicast) = true;
+  }
+
+  rpc Vote(PartialCert) returns (google.protobuf.Empty) {
+    option (gorums.unicast) = true;
+  }
+
+  rpc Timeout(TimeoutMsg) returns (google.protobuf.Empty) {
+    option (gorums.multicast) = true;
+  }
+
+  rpc NewView(SyncInfo) returns (google.protobuf.Empty) {
+    option (gorums.unicast) = true;
+  }
+
+  rpc Update(UpdateMsg) returns (google.protobuf.Empty) {
+    option (gorums.multicast) = true;
+  }
+
+  rpc ReconfigurationRequest(ReconfigurationMsg) returns (google.protobuf.Empty){
+    option (gorums.multicast) = true;
+  }
+  
+  rpc Fetch(BlockHash) returns (Block) { option (gorums.quorumcall) = true; }
+}
+
+message UpdateMsg {
+  Block Block =1;
+  uint32 QuorumSize =2;
+}
+
+message ReconfigurationMsg {
+  repeated uint32 ActiveReplicas =1;
+  QuorumCert QC = 2;
+  uint32 QuorumSize = 3;
+  uint64 View = 4;
+}
+
+message Proposal {
+  Block Block = 1;
+  AggQC AggQC = 2;
+  repeated Complaint Complaints = 3;
+}
+
+message BlockHash { bytes Hash = 1; }
+
+message Block {
+  bytes Parent = 1;
+  QuorumCert QC = 2;
+  uint64 View = 3;
+  bytes Command = 4;
+  uint32 Proposer = 5;
+  google.protobuf.Timestamp Timestamp = 6;
+}
+
+message ECDSASignature {
+  uint32 Signer = 1;
+  bytes R = 2;
+  bytes S = 3;
+}
+
+message BLS12Signature { bytes Sig = 1; }
+
+message Signature {
+  oneof Sig {
+    ECDSASignature ECDSASig = 1;
+    BLS12Signature BLS12Sig = 2;
+  }
+}
+
+message PartialCert {
+  QuorumSignature Sig = 1;
+  bytes Hash = 2;
+  google.protobuf.Timestamp Timestamp =3;
+}
+
+message ECDSAMultiSignature { repeated ECDSASignature Sigs = 1; }
+
+message BLS12AggregateSignature {
+  bytes Sig = 1;
+  bytes participants = 2;
+}
+
+message QuorumSignature {
+  oneof Sig {
+    ECDSAMultiSignature ECDSASigs = 1;
+    BLS12AggregateSignature BLS12Sig = 2;
+  }
+}
+
+message QuorumCert {
+  QuorumSignature Sig = 1;
+  uint64 View = 2;
+  bytes Hash = 3;
+  repeated uint32 LatencyVector = 4;
+  uint32 Creator =5;
+}
+
+message TimeoutCert {
+  QuorumSignature Sig = 1;
+  uint64 View = 2;
+}
+
+message TimeoutMsg {
+  uint64 View = 1;
+  SyncInfo SyncInfo = 2;
+  QuorumSignature ViewSig = 3;
+  QuorumSignature MsgSig = 4;
+}
+
+message SyncInfo {
+  QuorumCert QC = 1;
+  TimeoutCert TC = 2;
+  AggQC AggQC = 3;
+}
+
+message AggQC {
+  map<uint32, QuorumCert> QCs = 1;
+  QuorumSignature Sig = 2;
+  uint64 View = 3;
+}
+message Complaint {
+  uint32 Complainant = 1;
+  uint32 Complainee = 2;
+  ComplaintType Type = 3;
+  oneof Proof {
+    Proposal Proposal  =4;
+    PartialCert PartialCert =5;
+    Complaint Complaint =6;
+    QuorumCert QuorumCert =7;
+  }
+}
+
+enum ComplaintType {
+  default = 0;
+  InvalidProposal = 1;
+  InvalidVote = 2;
+  InvalidQuorumCert = 3;
+  InvalidComplaint = 4;
+  Suspicion = 5;
+}

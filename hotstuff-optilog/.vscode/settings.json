@@ -1,0 +1,6 @@
+{
+	"go.testFlags": [
+		"-count=1"
+	],
+	"cSpell.enabled": true
+}

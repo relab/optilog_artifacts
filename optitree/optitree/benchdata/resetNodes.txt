@@ -1,0 +1,18 @@
+goos: darwin
+goarch: amd64
+pkg: optitree/optitree
+cpu: Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz
+BenchmarkQCOptimalTree
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1284959847 ns/op	   3739261 trees/sec	2084521496 B/op	 9032765 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1306317566 ns/op	   3678126 trees/sec	2084437192 B/op	 9032284 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1295652134 ns/op	   3708403 trees/sec	2084445496 B/op	 9032330 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1296120757 ns/op	   3707062 trees/sec	2084444776 B/op	 9032363 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1296206667 ns/op	   3706816 trees/sec	2084430184 B/op	 9032222 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1312170529 ns/op	   3661719 trees/sec	2084436232 B/op	 9032285 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1303175629 ns/op	   3686993 trees/sec	2084428136 B/op	 9032197 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1227131876 ns/op	   3915472 trees/sec	2084419464 B/op	 9032136 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1229376569 ns/op	   3908322 trees/sec	2084421400 B/op	 9032135 allocs/op
+BenchmarkQCOptimalTree/size=13/bf=3/trees=4804800-24         	       1	1222515924 ns/op	   3930256 trees/sec	2084422344 B/op	 9032099 allocs/op
+PASS
+ok  	optitree/optitree	13.095s

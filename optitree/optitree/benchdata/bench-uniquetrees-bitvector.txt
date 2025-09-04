@@ -1,0 +1,49 @@
+goos: darwin
+goarch: amd64
+pkg: optitree/optitree
+cpu: Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz
+BenchmarkUniqueTrees
+BenchmarkUniqueTrees/size=7/bf=2/trees=630
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  111052	     11114 ns/op	  56687575 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  112803	     10795 ns/op	  58361276 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  109237	     10760 ns/op	  58549899 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  112820	     10804 ns/op	  58313028 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  110754	     10664 ns/op	  59077010 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  111738	     10719 ns/op	  58773810 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  109009	     10674 ns/op	  59022779 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  111362	     10638 ns/op	  59220341 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  111732	     10694 ns/op	  58910868 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  112292	     10750 ns/op	  58606942 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  109952	     10670 ns/op	  59043507 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  112560	     10824 ns/op	  58206550 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  110912	     11321 ns/op	  55647627 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  103801	     10917 ns/op	  57707175 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  114067	     11013 ns/op	  57205188 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  114688	     10639 ns/op	  59215687 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  111844	     10686 ns/op	  58956066 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  111373	     10721 ns/op	  58760876 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  109256	     10686 ns/op	  58954582 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=7/bf=2/trees=630-24         	  109662	     10634 ns/op	  59243771 trees/sec	      48 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 167080367 ns/op	  28757418 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       7	 166615586 ns/op	  28837638 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 167778669 ns/op	  28637729 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       7	 166628466 ns/op	  28835409 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 168472137 ns/op	  28519850 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 166954737 ns/op	  28779058 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       7	 167041310 ns/op	  28764142 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 166808966 ns/op	  28804207 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       7	 167586656 ns/op	  28670541 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       7	 166402260 ns/op	  28874608 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       7	 167510621 ns/op	  28683554 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 170802544 ns/op	  28130729 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       7	 167567831 ns/op	  28673761 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 170377620 ns/op	  28200887 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 170005791 ns/op	  28262567 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 167869900 ns/op	  28622165 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 167756405 ns/op	  28641529 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       7	 167979307 ns/op	  28603523 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 167715756 ns/op	  28648471 trees/sec	      96 B/op	       1 allocs/op
+BenchmarkUniqueTrees/size=13/bf=3/trees=4804800-24    	       6	 167785243 ns/op	  28636607 trees/sec	      96 B/op	       1 allocs/op
+PASS
+ok  	optitree/optitree	53.361s

@@ -1,0 +1,28 @@
+goos: darwin
+goarch: amd64
+pkg: optitree/optitree
+cpu: Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz
+BenchmarkQCOptimalTree
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1322624980 ns/op	   3632776 trees/sec	2084546384 B/op	 9033219 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1327624252 ns/op	   3619096 trees/sec	2084451632 B/op	 9032662 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1335756669 ns/op	   3597062 trees/sec	2084446480 B/op	 9032612 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1324761122 ns/op	   3626918 trees/sec	2084461088 B/op	 9032711 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1316904285 ns/op	   3648557 trees/sec	2084439440 B/op	 9032527 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1305193698 ns/op	   3681293 trees/sec	2084460128 B/op	 9032738 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1300558257 ns/op	   3694414 trees/sec	2084451184 B/op	 9032664 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1273410121 ns/op	   3773176 trees/sec	2084450592 B/op	 9032680 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1263335783 ns/op	   3803264 trees/sec	2084446000 B/op	 9032599 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1257699224 ns/op	   3820309 trees/sec	2084444384 B/op	 9032593 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1256722143 ns/op	   3823279 trees/sec	2084443456 B/op	 9032612 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1242069492 ns/op	   3868383 trees/sec	2084446912 B/op	 9032608 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1248140711 ns/op	   3849566 trees/sec	2084450880 B/op	 9032627 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1244067199 ns/op	   3862171 trees/sec	2084449632 B/op	 9032673 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1228962533 ns/op	   3909639 trees/sec	2084454288 B/op	 9032685 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1233064884 ns/op	   3896632 trees/sec	2084446240 B/op	 9032609 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1219725421 ns/op	   3939247 trees/sec	2084449040 B/op	 9032634 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1227264655 ns/op	   3915048 trees/sec	2084443776 B/op	 9032595 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1247874826 ns/op	   3850386 trees/sec	2084457488 B/op	 9032726 allocs/op
+BenchmarkQCOptimalTree/name=channel/size=13/bf=3/trees=4804800-24         	       1	1216375673 ns/op	   3950095 trees/sec	2084444800 B/op	 9032601 allocs/op
+PASS
+ok  	optitree/optitree	25.744s

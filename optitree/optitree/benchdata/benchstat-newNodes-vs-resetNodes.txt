@@ -1,0 +1,19 @@
+goos: darwin
+goarch: amd64
+pkg: optitree/optitree
+cpu: Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz
+                                            │ newNodes.txt │           resetNodes.txt           │
+                                            │    sec/op    │   sec/op    vs base                │
+QCOptimalTree/size=13/bf=3/trees=4804800-24    1.933 ± 14%   1.296 ± 5%  -32.95% (p=0.000 n=10)
+
+                                            │ newNodes.txt │           resetNodes.txt            │
+                                            │  trees/sec   │  trees/sec   vs base                │
+QCOptimalTree/size=13/bf=3/trees=4804800-24   2.487M ± 12%   3.708M ± 6%  +49.10% (p=0.000 n=10)
+
+                                            │ newNodes.txt │            resetNodes.txt            │
+                                            │     B/op     │     B/op      vs base                │
+QCOptimalTree/size=13/bf=3/trees=4804800-24   3.803Gi ± 0%   1.941Gi ± 0%  -48.95% (p=0.000 n=10)
+
+                                            │ newNodes.txt │           resetNodes.txt            │
+                                            │  allocs/op   │  allocs/op   vs base                │
+QCOptimalTree/size=13/bf=3/trees=4804800-24   13.837M ± 0%   9.032M ± 0%  -34.72% (p=0.000 n=10)
