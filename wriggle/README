@@ -1,2 +1,7 @@
 To run the experiment described in figure 11, change hotstuff/backend/server.go line 75, to change the wriggle room. 
 Use the 21 node configuration from experiment 10 to run this experiment.
+Based on the number of faulty intermediate nodes, add those node ids to `FaultyNodes` in `hotstuff.go`. 
+The intermediate tree nodes can be looked up in the cue configuration file. 
+For example if `[5,19,1,10]` are intermediate nodes for tree of size 21, if we need two faulty nodes, add any two of them to the `FaultyNodes` list.
+Do not forget to recompile after every change to the code.
+Use `throughput_avg.py` and `latency_avg.py` from fig10_config on the output directory to compute the throughput and latency of the experiment.
