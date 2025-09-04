@@ -6,12 +6,12 @@ import (
 	"gonum.org/v1/gonum/stat/combin"
 )
 
-func NumTrees(n, k int) int64 {
+func NumTrees(n, k int) int {
 	result := n
 	for i := 0; i <= k; i++ {
 		result *= combin.Binomial(n-1-i*k, k)
 	}
-	return int64(result)
+	return result
 }
 
 func NumTrees2(n, k int) *big.Int {
@@ -31,9 +31,9 @@ func TreeSize(bf int) int {
 // If cadence is 0, no intermediate results are emitted.
 // If cadence is 1, one intermediate result is emitted from each subtree.
 // If cadence is 2, two intermediate results are emitted from each subtree, and so on.
-func EmitCadence(n, cadence int, nTrees int64) int64 {
+func EmitCadence(n, cadence int, nTrees int) int {
 	if cadence == 0 {
 		return nTrees
 	}
-	return nTrees / int64(n*cadence)
+	return nTrees / (n * cadence)
 }

@@ -55,16 +55,49 @@ func remaining(taken []bool) []int {
 	return remaining
 }
 
+func evenFaults(n int) int {
+	return ((n - 1) / 3) &^ 1
+}
+
+func (l Latencies) SimulatedAnnealingWithFaults(params treeParams) result {
+	tFaults := evenFaults(params.nNodes)
+	for faults, j := 0, 0; faults < tFaults; faults += 2 {
+		treeLatencies := make([]float64, 0, params.iterations)
+		otherTreeLatencies := make([]float64, 0, params.iterations)
+		var result result
+		for range params.iterations {
+			result = l.SimulatedAnnealing(params)
+			treeLatencies = append(treeLatencies, float64(result.latency))
+			newQuorum := params.scf + (j * params.scd)
+			newTree := result.GeTree()
+			otherTreeLatencies = append(otherTreeLatencies, float64(l.qcLatency(newQuorum, params.bf, newTree.AsNodes(), true)))
+		}
+		mean, st1 := stat.MeanStdDev(treeLatencies, nil)
+		stat.MeanStdDev(otherTreeLatencies, nil)
+		printf("reconfigurations %d, mean latency is %v, sd is %v\n", j, mean, st1)
+		tree := result.GeTree()
+		newBaseTree := append(tree[2:], tree[0], tree[1])
+		params.faultIndex = params.nNodes - faults
+		params.baseTree = newBaseTree
+		params.faults = faults
+		j += 1
+	}
+	return result{}
+}
+
 func (l Latencies) SimulatedAnnealing(params treeParams) result {
 	timer := time.NewTimer(params.timeout)
 	tree := TreeConfig(params.baseTree)
 	nodes := tree.AsNodes()
 	quorumSize := quorumSize(params.nNodes)
+	if params.scf > 0 {
+		quorumSize = params.scf
+	}
 	if params.faults > 0 {
 		quorumSize += params.faults
 	}
 	best := result{
-		latency: l.qcLatency(quorumSize, params.bf, nodes),
+		latency: Latency(10000000),
 		nodes:   nodes,
 	}
 	for params.temp > params.threshold {
@@ -73,19 +106,24 @@ func (l Latencies) SimulatedAnnealing(params treeParams) result {
 			timer.Stop()
 			return best
 		default:
-			newSolution := mutate(tree)
+			newSolution := mutate(tree, params.faultIndex)
 			nodes = newSolution.AsNodes()
-			latency := l.qcLatency(quorumSize, params.bf, nodes)
+			latency := l.qcLatency(quorumSize, params.bf, nodes, (params.faultIndex > 0))
 			if latency < best.latency {
 				tree = newSolution
 				best.latency = latency
 				copy(best.nodes, nodes)
+				//copy(best.tree, tree)
+				// printf("new tree %v\n", nodes)
+				// printf("quorum size %d, bf %d latency %v\n", quorumSize, params.bf, latency)
 			} else {
 				random := rand.Float64()
 				if math.Exp(-(float64(latency-best.latency) / params.temp)) > random {
 					tree = newSolution
 					best.latency = latency
 					copy(best.nodes, nodes)
+					//copy(best.tree, tree)
+					// printf("new tree %v\n", nodes)
 				}
 			}
 			// Cool system down
@@ -111,11 +149,16 @@ func (tc TreeConfig) AsNodes() []node {
 	return nodes
 }
 
-func mutate(tree TreeConfig) TreeConfig {
+// mutate the tree by swapping two nodes, such that the two nodes are swapped within the same
+// group of nodes (above or below faultIdx). The faultIdx is the index of the first faulty node.
+func mutate(tree TreeConfig, faultIdx int) TreeConfig {
 	idx1, idx2 := tree.IntN(), tree.IntN()
-	for idx1 == idx2 {
+	// If the two nodes (idx1 and idx2) aren't in the same group (above or below faultIdx), we try again.
+	for idx1 == idx2 || ((idx1 >= faultIdx) != (idx2 >= faultIdx)) {
 		idx2 = tree.IntN()
+		idx1 = tree.IntN()
 	}
+	// swap the two nodes in the same group.
 	newTree := slices.Clone(tree)
 	newTree[idx1], newTree[idx2] = newTree[idx2], newTree[idx1]
 	return newTree
@@ -132,9 +175,6 @@ func (l Latencies) SimulatedAnnealingPerformance(params treeParams) result {
 
 func (l Latencies) ParallelSimulatedAnnealing(params treeParams) result {
 	treeSize := params.nNodes
-	if params.timeout == 0 {
-		params.timeout = time.Second
-	}
 	saParams := simulatedAnnealingParams{
 		temp:        params.temp,
 		coolingRate: params.coolingRate,
@@ -145,7 +185,7 @@ func (l Latencies) ParallelSimulatedAnnealing(params treeParams) result {
 	for root := range treeSize {
 		go func() {
 			baseTree := ComputeBaseTree(treeSize, root, params.bf, l)
-			params := NewTreeParams(baseTree, params.bf, 100, params.faults)
+			params := NewTreeParams(baseTree, params.bf, 100, params.faults, 0)
 			params.SetSimulatedAnnealingParams(saParams)
 			results <- l.SimulatedAnnealing(params)
 		}()

@@ -5,7 +5,7 @@ import (
 )
 
 // qcLatency returns the latency to obtain a quorum certificate (QC) from the give tree.
-func (l Latencies) qcLatency(quorumSize, branchFactor int, all []node) Latency {
+func (l Latencies) qcLatency(quorumSize, branchFactor int, all []node, noSort bool) Latency {
 	root, nodes := all[0], all[1:]
 
 	// Top-down dissemination of votes:
@@ -39,8 +39,9 @@ func (l Latencies) qcLatency(quorumSize, branchFactor int, all []node) Latency {
 	}
 	// Sort ascending arrival times of votes at leader
 	internalNodes := nodes[:branchFactor]
-	orderByLatency(branchFactor, internalNodes, nodes)
-
+	if !noSort {
+		orderByLatency(branchFactor, internalNodes, nodes)
+	}
 	// Collect QC latency
 	for _, internal := range internalNodes {
 		if root.votes >= quorumSize {

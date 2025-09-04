@@ -29,7 +29,11 @@ func main() {
 		iter   = flag.Int("iter", 1, "number of iterations for simulated annealing (for performance evaluation)")
 		timer  = flag.Duration("timer", 1*time.Second, "timeout for simulated annealing")
 		cool   = flag.Float64("cool", 0.00055, "cooling rate, if set to zero simulated annealing runs until timer expires")
-		faults = flag.Int("faults", 0, "number of faulty nodes in the tree")
+
+		faultAnalysis = flag.String("analysis", "", "latency fault analysis, one of [optitree, kauri, kauri-sa]")
+		scf           = flag.Int("scf", 0, "scoring function value")
+		scd           = flag.Int("scd", 0, "scoring function value delta")
+		faults        = flag.Int("faults", 0, "number of faulty nodes in the tree")
 	)
 	flag.Parse()
 
@@ -82,7 +86,7 @@ func main() {
 	if len(startTree) < *faults+quorumSize(len(startTree)) {
 		log.Fatalf("Invalid number of faults: %d, should be less than %d", *faults, len(startTree)-quorumSize(len(startTree)))
 	}
-	params := NewTreeParams(startTree, *bf, *emit, *faults)
+	params := NewTreeParams(startTree, *bf, *emit, *faults, *scd)
 	fmt.Printf("Number of CPUs: %d\n", runtime.NumCPU())
 	fmt.Printf("Number of trees expected: %d\n", params.nTrees)
 	fmt.Printf("Starting tree (size=%d, bf=%d): %v\n", size, *bf, startTree)
@@ -95,19 +99,32 @@ func main() {
 	case "mutex":
 		optimize = latencies.QCOptimalTreeMutex
 	case "sa":
+		if *scf == 0 {
+			*scf = quorumSize(len(startTree))
+		}
 		params.SetSimulatedAnnealingParams(simulatedAnnealingParams{
 			temp:        25000.0,
 			coolingRate: *cool,
 			threshold:   0.5,
 			timeout:     *timer,
+			scf:         *scf,
 		})
-		if *iter > 1 {
-			params.iterations = *iter
-			fmt.Printf("Running simulated annealing with %d iterations, timer duration: %s\n", *iter, *timer)
-			optimize = latencies.SimulatedAnnealingPerformance
-		} else {
-			fmt.Print("Running single shot simulated annealing\n")
-			optimize = latencies.ParallelSimulatedAnnealing
+		params.iterations = *iter
+		switch *faultAnalysis {
+		case "optitree":
+			optimize = latencies.SimulatedAnnealingWithFaults
+		case "kauri":
+			optimize = latencies.KauriFaultLatency
+		case "kauri-sa":
+			optimize = latencies.KauriSALatency
+		default:
+			if *iter > 1 {
+				fmt.Printf("Running simulated annealing with %d iterations, timer duration: %s\n", *iter, *timer)
+				optimize = latencies.SimulatedAnnealingPerformance
+			} else {
+				fmt.Print("Running single shot simulated annealing\n")
+				optimize = latencies.ParallelSimulatedAnnealing
+			}
 		}
 	default:
 		log.Fatalf("Invalid optimization algorithm: %s", *opt)
@@ -121,10 +138,15 @@ func main() {
 	} else {
 		fmt.Printf("Total unique trees analyzed: %d\n\n", optimal.analyzedTrees)
 		fmt.Println("Optimal tree found after:", stop)
-		fmt.Printf("\nThe QC optimal %s\n", optimal)
-		latencies.PrintNodes(optimal.nodes, *bf)
+		// fmt.Printf("\nThe QC optimal %s\n", optimal)
+		// latencies.PrintNodes(optimal.nodes, *bf)
 	}
 }
+
+// TODO clean up the cli flags: sa vs brute force, fault analysis, etc.
+// TODO Clean up the run.py script with the new cli flags and make it replicated the paper results
+// TODO make the output go to csv files
+// TODO make the output from the default SA analysis generate a toml file for ingestion into the hotstuff framework
 
 // TODO run with pgo
 // TODO make separate function that does not use goroutines at all; and we can run them in parallel using SLURM.

@@ -58,7 +58,7 @@ func TestQCLatency(t *testing.T) {
 		qs := quorumSize(len(tt.tree))
 		t.Run(fmt.Sprintf("%s/size=%d/bf=%d", tt.name, len(tt.tree), tt.bf), func(t *testing.T) {
 			nodes := newNodes(tt.tree[0], tt.tree[1:])
-			gotLat := latencies.qcLatency(qs, tt.bf, nodes)
+			gotLat := latencies.qcLatency(qs, tt.bf, nodes, false)
 			if gotLat != tt.wantLat {
 				t.Errorf("qcLatency() = %d; want %d", gotLat, tt.wantLat)
 			}
@@ -92,7 +92,7 @@ func TestQCOptimalTree(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		params := NewTreeParams(tt.tree, tt.bf, 0, 0)
+		params := NewTreeParams(tt.tree, tt.bf, 0, 0, 0)
 		t.Run(fmt.Sprintf("size=%d/bf=%d", len(tt.tree), tt.bf), func(t *testing.T) {
 			gotOptimal := latencies.QCOptimalTreeChannel(params)
 			if gotOptimal.latency != tt.want.latency {
@@ -139,7 +139,7 @@ func BenchmarkQCOptimalTree(b *testing.B) {
 		},
 	}
 	for _, tt := range tests {
-		params := NewTreeParams(tt.tree, tt.bf, 0, 0)
+		params := NewTreeParams(tt.tree, tt.bf, 0, 0, 0)
 		b.Run(fmt.Sprintf("name=%s/size=%v/bf=%d/trees=%d", tt.name, params.nNodes, tt.bf, params.nTrees), func(b *testing.B) {
 			b.ResetTimer()
 			b.StartTimer()
@@ -196,7 +196,7 @@ func BenchmarkQCLatency(b *testing.B) {
 		b.Run(fmt.Sprintf("%s/size=%d/bf=%d", tt.name, len(tt.tree), tt.bf), func(b *testing.B) {
 			for range b.N {
 				nodes := newNodes(tt.tree[0], tt.tree[1:])
-				_ = latencies.qcLatency(qs, tt.bf, nodes)
+				_ = latencies.qcLatency(qs, tt.bf, nodes, false)
 			}
 		})
 	}

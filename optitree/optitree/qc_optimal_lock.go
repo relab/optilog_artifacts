@@ -26,7 +26,7 @@ func (l Latencies) QCOptimalTreeMutex(params treeParams) result {
 
 			UniqueTrees(tree, params.bf, func(tree []int) {
 				resetNodes(nodes, tree)
-				latency := l.qcLatency(qs, params.bf, nodes)
+				latency := l.qcLatency(qs, params.bf, nodes, false)
 				if latency < bestLatency {
 					mutex.Lock()
 					optLat := optimal.latency

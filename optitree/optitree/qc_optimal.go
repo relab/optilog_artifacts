@@ -24,7 +24,7 @@ func (l Latencies) QCOptimalTreeChannel(params treeParams) result {
 
 			UniqueTrees(tree, params.bf, func(tree []int) {
 				resetNodes(nodes, tree)
-				latency := l.qcLatency(qs, params.bf, nodes)
+				latency := l.qcLatency(qs, params.bf, nodes, true)
 				if latency < best.latency {
 					best.latency = latency
 					copy(best.nodes, nodes)
@@ -53,11 +53,19 @@ func (l Latencies) QCOptimalTreeChannel(params treeParams) result {
 type result struct {
 	nodes         []node
 	latency       Latency
-	analyzedTrees int64
+	analyzedTrees int
 	mean          float64
 	stdDev        float64
 }
 
 func (r result) String() string {
 	return fmt.Sprintf("tree: %v has latency: %s", toString(r.nodes), r.latency)
+}
+
+func (r result) GeTree() TreeConfig {
+	res := make([]int, 0, len(r.nodes))
+	for _, node := range r.nodes {
+		res = append(res, node.id)
+	}
+	return res
 }
