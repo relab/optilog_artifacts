@@ -1,12 +1,22 @@
 ### OptiLog Artifacts
 
-#### Optitree contains the code and scripts required to perform the experiments described in figure 9 and 12. 
-use python scripts fig9_run.py and fig12_run.py to run the experiments. 
+This repository contains the artifacts accompanying the paper titled **"OptiLog: Assigning Roles in Byzantine Consensus"**.  
+OptiLog offers a comprehensive framework for recording experimental measurements and utilizing them to compute optimized system configurations.
+This repository contains three primary artifacts utilized in the evaluation of OptiLog.
 
-#### fig10_config contains the configuration file required to perform the experiment described in figure 10.
+In addition to the contents of this repository, our evaluation also relies on artifacts from the following public repositories:
+- [HotStuff](https://github.com/relab/hotstuff)
+- [OptiAware](https://github.com/bergerch/opti-aware)
 
-#### overhead contains the code to conduct the experiement described in figure 13.
+For the final artifact submission, these two repositories have been incorporated into this repository to ensure completeness and ease of use. 
 
-#### wriggle contains the code to perform the experiement explained in figure 11. 
+### Overview
+Each of the directories contains the README to explain the usage of the artifact.
 
-Each of the directory contains the README to explain the usage of the directory.
+- Optitree contains the code and scripts required to perform the experiments described in figure 9 and 12. 
+
+- fig10_config contains the configuration file required to perform the experiments described in figure 10.
+
+- overhead contains the code to conduct the experiement described in figure 13.
+
+- wriggle contains the code to perform the experiement explained in figure 11. 
