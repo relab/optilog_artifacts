@@ -11,24 +11,34 @@ Run the following command to build optitree binary
 go mod download
 cd optitree; go build .
 ```
+#### Running Experiments
 
-#### Run Experiments 
+To conduct the OptiTree simulation experiments, follow these steps:
 
-1. Install Python3 to run the experiments
+1. **Install Python 3**
 
-```sh
- sudo apt install python3
-```
-2. Use `fig9_run.py` in optitree directory to run reconfiguration simulations
+    Ensure Python 3 is installed on your system:
 
-```sh
-python3 fig9_run.py
-```
+    ```sh
+    sudo apt install python3
+    ```
 
-3. Use `fig12_run.py` in optitree directory to run simulated annealhing simulations
+2. **Run Reconfiguration Simulations (Figure 9)**
 
-```sh
-python3 fig12_run.py
-```
+    Execute the following command in the `optitree` directory to run the reconfiguration simulations:
 
-4. Use the latency from the script output to plot the graphs
+    ```sh
+    python3 fig9_run.py
+    ```
+
+3. **Run Simulated Annealing Simulations (Figure 12)**
+
+    Execute the following command in the `optitree` directory to run the simulated annealing simulations:
+
+    ```sh
+    python3 fig12_run.py
+    ```
+
+4. **Plot Results**
+
+    Use the latency values from the script outputs to generate the corresponding graphs.
