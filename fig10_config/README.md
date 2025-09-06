@@ -1,6 +1,7 @@
 ### HotStuff Framework Experiments
 
 The experiments described in Figure 10 use the [HotStuff repository](https://github.com/relab/hotstuff). These experiments are designed to run on a cluster, with each node hosting one or more replicas.
+We used Ubuntu 22.04 as the operating system on the nodes in the Cluster.
 
 #### Prerequisites
 
