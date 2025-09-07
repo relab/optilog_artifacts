@@ -8,8 +8,9 @@ These experiments are run on the a laptop with 16 GB RAM and 12 cores running Ub
 Run the following command to build optitree binary
 
 ```sh
+cd optitree;
 go mod download
-cd optitree; go build .
+go build .
 ```
 #### Running Experiments
 

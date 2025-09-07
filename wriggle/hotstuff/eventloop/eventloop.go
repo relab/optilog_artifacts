@@ -12,6 +12,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/relab/hotstuff/logging"
+	"github.com/relab/hotstuff/modules"
 	"github.com/relab/hotstuff/util/gpool"
 )
 
@@ -51,6 +53,8 @@ type handler struct {
 
 // EventLoop accepts events of any type and executes registered event handlers.
 type EventLoop struct {
+	logger logging.Logger
+
 	eventQ queue
 
 	mut sync.Mutex // protects the following:
@@ -77,16 +81,8 @@ func New(bufferSize uint) *EventLoop {
 	return el
 }
 
-// RegisterObserver registers a handler with priority.
-// Deprecated: use RegisterHandler and the Prioritize option instead.
-func (el *EventLoop) RegisterObserver(eventType any, handler EventHandler) int {
-	return el.registerHandler(eventType, []HandlerOption{Prioritize()}, handler)
-}
-
-// UnregisterObserver unregister a handler.
-// Deprecated: use UnregisterHandler instead.
-func (el *EventLoop) UnregisterObserver(eventType any, id int) {
-	el.UnregisterHandler(eventType, id)
+func (el *EventLoop) InitModule(mods *modules.Core) {
+	mods.Get(&el.logger)
 }
 
 // RegisterHandler registers the given event handler for the given event type with the given handler options, if any.
@@ -141,7 +137,10 @@ func (el *EventLoop) AddEvent(event any) {
 	if event != nil {
 		// run handlers with runInAddEvent option
 		el.processEvent(event, true)
-		el.eventQ.push(event)
+		droppedEvent := el.eventQ.push(event)
+		if droppedEvent != nil {
+			el.logger.Warnf("event queue is full, dropped event: %v", droppedEvent)
+		}
 	}
 }
 
@@ -187,7 +186,7 @@ loop:
 		el.processEvent(event, false)
 	}
 
-	// HACK: when we get cancelled, we will handle the events that were in the queue at that time before quitting.
+	// HACK: when we get canceled, we will handle the events that were in the queue at that time before quitting.
 	l := el.eventQ.len()
 	for i := 0; i < l; i++ {
 		event, _ := el.eventQ.pop()
@@ -320,7 +319,10 @@ func (el *EventLoop) AddTicker(interval time.Duration, callback func(tick time.T
 
 	// We want the ticker to inherit the context of the event loop,
 	// so we need to start the ticker from the run loop.
-	el.eventQ.push(startTickerEvent{id})
+	droppedEvent := el.eventQ.push(startTickerEvent{id})
+	if droppedEvent != nil {
+		el.logger.Warnf("event queue is full, dropped event: %v", droppedEvent)
+	}
 
 	return id
 }

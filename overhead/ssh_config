@@ -1,0 +1,197 @@
+Host *
+    StrictHostKeyChecking no
+Host 152.94.162.12 bbchain2
+    HostName bbchain2
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.13 bbchain3
+    HostName bbchain3
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.14 bbchain4
+    HostName bbchain4
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.15 bbchain5
+    HostName bbchain5
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.16 bbchain6
+    HostName bbchain6
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.17 bbchain7
+    HostName bbchain7
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.18 bbchain8
+    HostName bbchain8
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.19 bbchain9
+    HostName bbchain9
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.20 bbchain10
+    HostName bbchain10
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.21 bbchain11
+    HostName bbchain11
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.11 bbchain1
+    HostName bbchain1
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.22 bbchain12
+    HostName bbchain12
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.23 bbchain13
+    HostName bbchain13
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.24 bbchain14
+    HostName bbchain14
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.25 bbchain15
+    HostName bbchain15
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.26 bbchain16
+    HostName bbchain16
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.27 bbchain17
+    HostName bbchain17
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.28 bbchain18
+    HostName bbchain18
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.29 bbchain19
+    HostName bbchain19
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.32 bbchain22
+    HostName bbchain22
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.33 bbchain23
+    HostName bbchain23
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.34 bbchain24
+    HostName bbchain24
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.35 bbchain25
+    HostName bbchain25
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.36 bbchain26
+    HostName bbchain26
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.37 bbchain27
+    HostName bbchain27
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.38 bbchain28
+    HostName bbchain28
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.39 bbchain29
+    HostName bbchain29
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts
+
+Host 152.94.162.40 bbchain30
+    HostName bbchain30
+    User hgogada
+    Port 22
+    IdentityFile /home/hgogada/.ssh/id_rsa
+    UserKnownHostsFile /home/hgogada/.ssh/known_hosts

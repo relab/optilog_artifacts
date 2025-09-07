@@ -3,14 +3,15 @@ package consensus_test
 import (
 	"context"
 	"testing"
+	"time"
 
-	"github.com/golang/mock/gomock"
 	"github.com/relab/hotstuff"
 	"github.com/relab/hotstuff/eventloop"
 	"github.com/relab/hotstuff/internal/mocks"
 	"github.com/relab/hotstuff/internal/testutil"
 	"github.com/relab/hotstuff/modules"
 	"github.com/relab/hotstuff/synchronizer"
+	"go.uber.org/mock/gomock"
 )
 
 // TestVote checks that a leader can collect votes on a proposal to form a QC
@@ -19,7 +20,7 @@ func TestVote(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	bl := testutil.CreateBuilders(t, ctrl, n)
 	cs := mocks.NewMockConsensus(ctrl)
-	bl[0].Add(synchronizer.New(testutil.FixedTimeout(1000)), cs)
+	bl[0].Add(synchronizer.New(testutil.FixedTimeout(1*time.Millisecond)), cs)
 	hl := bl.Build()
 	hs := hl[0]
 
@@ -34,14 +35,14 @@ func TestVote(t *testing.T) {
 
 	ok := false
 	ctx, cancel := context.WithCancel(context.Background())
-	eventLoop.RegisterObserver(hotstuff.NewViewMsg{}, func(event any) {
+	eventLoop.RegisterHandler(hotstuff.NewViewMsg{}, func(_ any) {
 		ok = true
 		cancel()
-	})
+	}, eventloop.Prioritize())
 
 	b := testutil.NewProposeMsg(
 		hotstuff.GetGenesis().Hash(),
-		hotstuff.NewQuorumCert(nil, 1, hotstuff.GetGenesis().Hash(), make([]uint32, 0)),
+		hotstuff.NewQuorumCert(nil, 1, hotstuff.GetGenesis().Hash()),
 		"test", 1, 1,
 	)
 	blockChain.Store(b.Block)

@@ -21,16 +21,7 @@ func (rr *roundRobin) InitModule(mods *modules.Core) {
 func (rr roundRobin) GetLeader(view hotstuff.View) hotstuff.ID {
 	// TODO: does not support reconfiguration
 	// assume IDs start at 1
-	leader := hotstuff.ID(1)
-	for true {
-		leader = chooseRoundRobin(view, rr.configuration.Len())
-		replica, ok := rr.configuration.Replica(leader)
-		if ok && replica.Active() {
-			break
-		}
-		view += 1
-	}
-	return leader
+	return chooseRoundRobin(view, rr.configuration.Len())
 }
 
 // NewRoundRobin returns a new round-robin leader rotation implementation.

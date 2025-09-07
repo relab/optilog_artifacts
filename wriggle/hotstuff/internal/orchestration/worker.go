@@ -20,15 +20,16 @@ import (
 	"github.com/relab/hotstuff/crypto"
 	"github.com/relab/hotstuff/crypto/keygen"
 	"github.com/relab/hotstuff/eventloop"
+	"github.com/relab/hotstuff/internal/latency"
 	"github.com/relab/hotstuff/internal/proto/orchestrationpb"
 	"github.com/relab/hotstuff/internal/protostream"
+	"github.com/relab/hotstuff/internal/tree"
 	"github.com/relab/hotstuff/logging"
 	"github.com/relab/hotstuff/metrics"
 	"github.com/relab/hotstuff/metrics/types"
 	"github.com/relab/hotstuff/modules"
 	"github.com/relab/hotstuff/replica"
 	"github.com/relab/hotstuff/synchronizer"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -39,10 +40,9 @@ import (
 	_ "github.com/relab/hotstuff/consensus/simplehotstuff"
 	_ "github.com/relab/hotstuff/crypto/bls12"
 	_ "github.com/relab/hotstuff/crypto/ecdsa"
-	_ "github.com/relab/hotstuff/handel"
+	_ "github.com/relab/hotstuff/crypto/eddsa"
 	_ "github.com/relab/hotstuff/kauri"
 	_ "github.com/relab/hotstuff/leaderrotation"
-	_ "github.com/relab/hotstuff/ranking"
 )
 
 // Worker starts and runs clients and replicas based on commands from the controller.
@@ -148,6 +148,7 @@ func (w *Worker) createReplicas(req *orchestrationpb.CreateReplicaRequest) (*orc
 
 func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Replica, error) {
 	w.metricsLogger.Log(opts)
+	logger := logging.New("hs" + strconv.Itoa(int(opts.GetID())))
 
 	// get private key and certificates
 	privKey, err := keygen.ParsePrivateKey(opts.GetPrivateKey())
@@ -172,9 +173,12 @@ func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Repl
 		return nil, fmt.Errorf("invalid consensus name: '%s'", opts.GetConsensus())
 	}
 
-	if opts.GetByzantineStrategy() != "" {
-		if byz, ok := modules.GetModule[byzantine.Byzantine](opts.GetByzantineStrategy()); ok {
+	strategy := opts.GetByzantineStrategy()
+	if strategy != "" {
+		if byz, ok := modules.GetModule[byzantine.Byzantine](strategy); ok {
 			consensusRules = byz.Wrap(consensusRules)
+			logger.Infof("assigned byzantine strategy: %s", strategy)
+
 		} else {
 			return nil, fmt.Errorf("invalid byzantine strategy: '%s'", opts.GetByzantineStrategy())
 		}
@@ -189,13 +193,22 @@ func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Repl
 	if !ok {
 		return nil, fmt.Errorf("invalid leader-rotation algorithm: '%s'", opts.GetLeaderRotation())
 	}
-
-	sync := synchronizer.New(synchronizer.NewViewDuration(
-		uint64(opts.GetTimeoutSamples()),
-		float64(opts.GetInitialTimeout().AsDuration().Nanoseconds())/float64(time.Millisecond),
-		float64(opts.GetMaxTimeout().AsDuration().Nanoseconds())/float64(time.Millisecond),
-		float64(opts.GetTimeoutMultiplier()),
-	))
+	var viewDuration synchronizer.ViewDuration
+	if opts.GetLeaderRotation() == "tree-leader" {
+		// TODO(meling): Temporary default; should be configurable and moved to the appropriate place.
+		opts.SetTreeHeightWaitTime()
+		// create tree only if we are using tree leader (Kauri)
+		builder.Options().SetTree(createTree(opts))
+		viewDuration = synchronizer.NewFixedViewDuration(opts.GetInitialTimeout().AsDuration())
+	} else {
+		viewDuration = synchronizer.NewViewDuration(
+			uint64(opts.GetTimeoutSamples()),
+			float64(opts.GetInitialTimeout().AsDuration().Nanoseconds())/float64(time.Millisecond),
+			float64(opts.GetMaxTimeout().AsDuration().Nanoseconds())/float64(time.Millisecond),
+			float64(opts.GetTimeoutMultiplier()),
+		)
+	}
+	sync := synchronizer.New(viewDuration)
 	builder.Add(
 		eventloop.New(1000),
 		consensus.New(consensusRules),
@@ -205,9 +218,10 @@ func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Repl
 		sync,
 		w.metricsLogger,
 		blockchain.New(),
-		logging.New("hs"+strconv.Itoa(int(opts.GetID()))),
+		logger,
 	)
 	builder.Options().SetSharedRandomSeed(opts.GetSharedSeed())
+
 	if w.measurementInterval > 0 {
 		replicaMetrics := metrics.GetReplicaMetrics(w.metrics...)
 		builder.Add(replicaMetrics...)
@@ -221,25 +235,33 @@ func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Repl
 		}
 		builder.Add(m)
 	}
-	// convert location info map key from uint32 to hotstuff.ID
-	locationInfo := make(map[hotstuff.ID]string)
-	for k, v := range opts.GetLocationInfo() {
-		locationInfo[hotstuff.ID(k)] = v
-	}
 	c := replica.Config{
-		ID:           hotstuff.ID(opts.GetID()),
-		PrivateKey:   privKey,
-		TLS:          opts.GetUseTLS(),
-		Certificate:  &certificate,
-		RootCAs:      rootCAs,
-		LocationInfo: locationInfo,
-		BatchSize:    opts.GetBatchSize(),
+		ID:          hotstuff.ID(opts.GetID()),
+		PrivateKey:  privKey,
+		TLS:         opts.GetUseTLS(),
+		Certificate: &certificate,
+		RootCAs:     rootCAs,
+		Locations:   opts.GetLocations(),
+		BatchSize:   opts.GetBatchSize(),
 		ManagerOptions: []gorums.ManagerOption{
 			gorums.WithDialTimeout(opts.GetConnectTimeout().AsDuration()),
-			gorums.WithGrpcDialOptions(grpc.WithReturnConnectionError()),
 		},
 	}
 	return replica.New(c, builder), nil
+}
+
+// createTree creates a tree based on the given replica options.
+func createTree(replicaOpts *orchestrationpb.ReplicaOpts) tree.Tree {
+	tree := tree.CreateTree(replicaOpts.HotstuffID(), int(replicaOpts.GetBranchFactor()), replicaOpts.TreePositionIDs())
+	switch {
+	case replicaOpts.GetAggregationTime():
+		tree.SetAggregationWaitTime(latency.MatrixFrom(replicaOpts.GetLocations()), replicaOpts.TreeDeltaDuration())
+	case replicaOpts.GetTreeHeightTime():
+		fallthrough
+	default:
+		tree.SetTreeHeightWaitTime(replicaOpts.TreeDeltaDuration())
+	}
+	return tree
 }
 
 func (w *Worker) startReplicas(req *orchestrationpb.StartReplicaRequest) (*orchestrationpb.StartReplicaResponse, error) {
@@ -298,7 +320,6 @@ func (w *Worker) startClients(req *orchestrationpb.StartClientRequest) (*orchest
 			Input:         io.NopCloser(rand.Reader),
 			ManagerOptions: []gorums.ManagerOption{
 				gorums.WithDialTimeout(opts.GetConnectTimeout().AsDuration()),
-				gorums.WithGrpcDialOptions(grpc.WithReturnConnectionError()),
 			},
 			RateLimit:        opts.GetRateLimit(),
 			RateStep:         opts.GetRateStep(),

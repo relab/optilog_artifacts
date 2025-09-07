@@ -2,7 +2,6 @@
 package testutil
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"testing"
@@ -12,7 +11,6 @@ import (
 	"github.com/relab/hotstuff/eventloop"
 	"github.com/relab/hotstuff/modules"
 
-	"github.com/golang/mock/gomock"
 	"github.com/relab/hotstuff"
 	"github.com/relab/hotstuff/blockchain"
 	"github.com/relab/hotstuff/crypto"
@@ -24,6 +22,7 @@ import (
 	"github.com/relab/hotstuff/logging"
 	"github.com/relab/hotstuff/synchronizer"
 	"github.com/relab/hotstuff/twins"
+	"go.uber.org/mock/gomock"
 )
 
 // TestModules registers default modules for testing to the given builder.
@@ -50,8 +49,6 @@ func TestModules(t *testing.T, ctrl *gomock.Controller, id hotstuff.ID, _ hotstu
 
 	synchronizer := mocks.NewMockSynchronizer(ctrl)
 	synchronizer.EXPECT().Start(gomock.Any()).AnyTimes()
-	synchronizer.EXPECT().ViewContext().AnyTimes().Return(context.Background())
-
 	builder.Add(
 		eventloop.New(100),
 		logging.New(fmt.Sprintf("hs%d", id)),
@@ -185,7 +182,7 @@ func CreateTimeouts(t *testing.T, view hotstuff.View, signers []modules.Crypto) 
 			ID:            signer(sig),
 			View:          view,
 			ViewSignature: sig,
-			SyncInfo:      hotstuff.NewSyncInfo().WithQC(hotstuff.NewQuorumCert(nil, 0, hotstuff.GetGenesis().Hash(), make([]uint32, 0))),
+			SyncInfo:      hotstuff.NewSyncInfo().WithQC(hotstuff.NewQuorumCert(nil, 0, hotstuff.GetGenesis().Hash())),
 		})
 	}
 	for i := range timeouts {
@@ -250,6 +247,16 @@ func GenerateECDSAKey(t *testing.T) hotstuff.PrivateKey {
 	return key
 }
 
+// GenerateEDDSAKey generates an ECDSA private key for use in tests.
+func GenerateEDDSAKey(t *testing.T) hotstuff.PrivateKey {
+	t.Helper()
+	_, key, err := keygen.GenerateED25519Key()
+	if err != nil {
+		t.Fatalf("Failed to generate private key: %v", err)
+	}
+	return key
+}
+
 // GenerateBLS12Key generates a BLS12-381 private key for use in tests.
 func GenerateBLS12Key(t *testing.T) hotstuff.PrivateKey {
 	t.Helper()
@@ -271,7 +278,7 @@ func GenerateKeys(t *testing.T, n int, keyFunc func(t *testing.T) hotstuff.Priva
 
 // NewProposeMsg wraps a new block in a ProposeMsg.
 func NewProposeMsg(parent hotstuff.Hash, qc hotstuff.QuorumCert, cmd hotstuff.Command, view hotstuff.View, id hotstuff.ID) hotstuff.ProposeMsg {
-	return hotstuff.ProposeMsg{ID: id, Block: hotstuff.NewBlock(parent, qc, cmd, view, id, time.Now())}
+	return hotstuff.ProposeMsg{ID: id, Block: hotstuff.NewBlock(parent, qc, cmd, view, id)}
 }
 
 type leaderRotation struct {

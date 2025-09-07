@@ -1,7 +1,31 @@
-Overhead experiment is similar the experiment described in Figure 10, we need to change the code in consensus.go file to run different variations. 
+### OptiLog Overhead Experiments
 
-Comment line 217 to run the overhead experiment with only latency vector enabled. 
+This directory contains the necessary artifacts to conduct the OptiLog overhead experiments as presented in Figure 13.
+The experiments are organized into four variants, each enabling a specific set of OptiLog sensors.
 
-Run the experiment with `proposalBytes` as one of the values to the metrics parameter.
+#### Prerequisites
 
-Use `senddata.py` python script on the output data to know the overhead of the OptiLog on the proposal.
+Before proceeding, ensure that you have completed all setup steps outlined in `fig10_config/README.md`.
+This includes installing dependencies, configuring your environment, and preparing the required input files.
+Update the TOML configuration files by replacing occurrences of `bbchain` with the actual node hostnames in your cluster.
+
+#### Building the HotStuff Binary
+
+On the controller node, compile the HotStuff binary using the following commands:
+```sh
+make install
+make
+```
+
+#### Running the Experiment
+
+To execute the experiment described in Figure 13, modify the `--config` parameter to match your cluster size.
+
+**Example command for a 20-node cluster:**
+```sh
+./hotstuff run --config 20.toml --ssh-config ssh_config --leader-rotation fixed --client-timeout 150s --duration 120s --metrics proposalBytes --measurement-interval 1s --output output_data --max-concurrent 3000 --view-timeout 1s --modules ranking
+```
+
+#### Processing Experiment Results
+
+Upon completion, experiment results will be available in the `output_data` directory. Use the `senddata.py` script on this output to compute the average proposal size.

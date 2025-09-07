@@ -1,0 +1,189 @@
+clients = 2
+replicas = 20
+
+hosts = [ 
+    "bbchain1",
+    "bbchain2",
+    "bbchain3",
+    "bbchain4",
+    "bbchain5",
+    "bbchain6",
+    "bbchain7",
+    "bbchain8",
+    "bbchain9",
+    "bbchain10",
+    "bbchain11",
+    "bbchain12",
+    "bbchain13",
+    "bbchain14",
+    "bbchain15",
+    "bbchain16",
+    "bbchain17",
+    "bbchain18",
+    "bbchain19",
+    "bbchain22",
+    "bbchain23",
+    "bbchain24",
+    "bbchain25",
+    "bbchain26",
+    "bbchain27",
+    "bbchain28",
+    "bbchain29",
+    "bbchain30",
+]
+
+[[hosts-config]]
+name = "bbchain1"
+clients = 1
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain2"
+clients = 1
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain3"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain4"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain5"
+clients = 0
+replicas = 4
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain6"
+clients = 0
+replicas = 4
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain7"
+clients = 0
+replicas = 4
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain8"
+clients = 0
+replicas = 4
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain9"
+clients = 0
+replicas = 4
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain10"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain11"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain12"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain13"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain14"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain15"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain17"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain18"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain22"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain23"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain24"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain25"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain26"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain27"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain28"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain29"
+clients = 0
+replicas = 0
+location = "Frankfurt"
+
+[[hosts-config]]
+name = "bbchain30"
+clients = 0
+replicas = 0
+location = "Frankfurt"

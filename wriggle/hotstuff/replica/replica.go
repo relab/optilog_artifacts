@@ -44,8 +44,8 @@ type Config struct {
 	ReplicaServerOptions []gorums.ServerOption
 	// Options for the replica manager.
 	ManagerOptions []gorums.ManagerOption
-	// Location information of all replicas
-	LocationInfo map[hotstuff.ID]string
+	// Location names of all replicas.
+	Locations []string
 }
 
 // Replica is a participant in the consensus protocol.
@@ -91,7 +91,7 @@ func New(conf Config, builder modules.Builder) (replica *Replica) {
 	}
 
 	srv.hsSrv = backend.NewServer(
-		backend.WithLatencyInfo(conf.ID, conf.LocationInfo),
+		backend.WithLatencies(conf.ID, conf.Locations),
 		backend.WithGorumsServerOptions(replicaSrvOpts...),
 	)
 
@@ -103,7 +103,7 @@ func New(conf Config, builder modules.Builder) (replica *Replica) {
 			Certificates: []tls.Certificate{*conf.Certificate},
 		})
 	}
-	srv.cfg = backend.NewConfig(creds, conf.LocationInfo, managerOpts...)
+	srv.cfg = backend.NewConfig(creds, managerOpts...)
 
 	builder.Add(
 		srv.cfg,   // configuration
@@ -151,7 +151,7 @@ func (srv *Replica) Stop() {
 	srv.Close()
 }
 
-// Run runs the replica until the context is cancelled.
+// Run runs the replica until the context is canceled.
 func (srv *Replica) Run(ctx context.Context) {
 	var (
 		synchronizer modules.Synchronizer

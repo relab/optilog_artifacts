@@ -16,22 +16,28 @@ type Block struct {
 	cmd      Command
 	cert     QuorumCert
 	view     View
-	time     time.Time
+	ts       time.Time
 }
 
 // NewBlock creates a new Block
-func NewBlock(parent Hash, cert QuorumCert, cmd Command, view View, proposer ID, time time.Time) *Block {
+func NewBlock(parent Hash, cert QuorumCert, cmd Command, view View, proposer ID) *Block {
 	b := &Block{
 		parent:   parent,
 		cert:     cert,
 		cmd:      cmd,
 		view:     view,
 		proposer: proposer,
-		time:     time,
+		ts:       time.Now(),
 	}
 	// cache the hash immediately because it is too racy to do it in Hash()
 	b.hash = sha256.Sum256(b.ToBytes())
 	return b
+}
+
+func (b *Block) SetTimestamp(ts time.Time) {
+	b.ts = ts
+	// recalculate the hash since the timestamp is part of the block
+	b.hash = sha256.Sum256(b.ToBytes())
 }
 
 func (b *Block) String() string {
@@ -65,10 +71,6 @@ func (b *Block) Command() Command {
 	return b.cmd
 }
 
-func (b *Block) Time() time.Time {
-	return b.time
-}
-
 // QuorumCert returns the quorum certificate in the block
 func (b *Block) QuorumCert() QuorumCert {
 	return b.cert
@@ -77,6 +79,11 @@ func (b *Block) QuorumCert() QuorumCert {
 // View returns the view in which the Block was proposed
 func (b *Block) View() View {
 	return b.view
+}
+
+// Timestamp returns the timestamp of the block
+func (b *Block) Timestamp() time.Time {
+	return b.ts
 }
 
 // ToBytes returns the raw byte form of the Block, to be used for hashing, etc.
@@ -90,5 +97,8 @@ func (b *Block) ToBytes() []byte {
 	buf = append(buf, viewBuf[:]...)
 	buf = append(buf, []byte(b.cmd)...)
 	buf = append(buf, b.cert.ToBytes()...)
+	var tsBuf [8]byte
+	binary.LittleEndian.PutUint64(tsBuf[:], uint64(b.ts.UnixNano()))
+	buf = append(buf, tsBuf[:]...)
 	return buf
 }

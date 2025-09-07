@@ -13,15 +13,7 @@ func (id ID) ToBytes() []byte {
 	return idBytes[:]
 }
 
-// DefaultLocation is the default location of a replica.
-const DefaultLocation = "default"
-
-// DefaultLatency is the default latencies between the default replicas.
-const DefaultLatency = 500
-
-const SynchronousMaxDelay = 500
-
-var FaultyNodes []ID = []ID{1}
+var FaultyNodes []ID = []ID{5}
 
 func IsFaulty(id ID) bool {
 	for _, node := range FaultyNodes {

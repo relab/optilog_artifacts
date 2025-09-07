@@ -31,9 +31,9 @@ type qspec struct {
 }
 
 func (q *qspec) ExecCommandQF(_ *clientpb.Command, signatures map[uint32]*emptypb.Empty) (*emptypb.Empty, bool) {
-	// if len(signatures) < q.faulty+1 {
-	// 	return nil, false
-	// }
+	if len(signatures) < q.faulty+1 {
+		return nil, false
+	}
 	return &emptypb.Empty{}, true
 }
 
@@ -106,18 +106,14 @@ func New(conf Config, builder modules.Builder) (client *Client) {
 
 	builder.Build()
 
-	grpcOpts := []grpc.DialOption{grpc.WithBlock()}
-
 	var creds credentials.TransportCredentials
 	if conf.TLS {
 		creds = credentials.NewClientTLSFromCert(conf.RootCAs, "")
 	} else {
 		creds = insecure.NewCredentials()
 	}
-	grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(creds))
 
-	opts := conf.ManagerOptions
-	opts = append(opts, gorums.WithGrpcDialOptions(grpcOpts...))
+	opts := append(conf.ManagerOptions, gorums.WithGrpcDialOptions(grpc.WithTransportCredentials(creds)))
 
 	client.mgr = clientpb.NewManager(opts...)
 
@@ -167,7 +163,7 @@ func (c *Client) Run(ctx context.Context) {
 	c.close()
 
 	commandStats := <-commandStatsChan
-	c.logger.Errorf(
+	c.logger.Infof(
 		"Done sending commands (executed: %d, failed: %d, timeouts: %d)",
 		commandStats.executed, commandStats.failed, commandStats.timeout,
 	)
@@ -201,13 +197,11 @@ func (c *Client) sendCommands(ctx context.Context) error {
 		num         uint64 = 1
 		lastCommand uint64 = math.MaxUint64
 		lastStep           = time.Now()
+		nextLogTime        = time.Now().Add(time.Second)
 	)
 
 loop:
-	for {
-		if ctx.Err() != nil {
-			break
-		}
+	for ctx.Err() == nil {
 
 		// step up the rate limiter
 		now := time.Now()
@@ -257,8 +251,9 @@ loop:
 			break loop
 		}
 
-		if num%100 == 0 {
-			c.logger.Infof("%d commands sent", num)
+		if time.Now().After(nextLogTime) {
+			c.logger.Infof("%d commands sent so far", num)
+			nextLogTime = time.Now().Add(time.Second)
 		}
 
 	}

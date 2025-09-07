@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"strconv"
-	"time"
 
 	"github.com/relab/hotstuff/eventloop"
 	"github.com/relab/hotstuff/logging"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/relab/gorums"
 	"github.com/relab/hotstuff"
+	"github.com/relab/hotstuff/internal/latency"
 	"github.com/relab/hotstuff/internal/proto/hotstuffpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -27,12 +27,11 @@ type Server struct {
 	blockChain    modules.BlockChain
 	configuration modules.Configuration
 	eventLoop     *eventloop.EventLoop
-	opts          *modules.Options
 	logger        logging.Logger
-	location      string
-	locationInfo  map[hotstuff.ID]string
-	latencyMatrix map[string]time.Duration
+	id            hotstuff.ID
+	lm            latency.Matrix
 	gorumsSrv     *gorums.Server
+	opts          *modules.Options
 }
 
 // InitModule initializes the Server.
@@ -53,9 +52,8 @@ func NewServer(opts ...ServerOptions) *Server {
 		opt(options)
 	}
 	srv := &Server{
-		location:      options.location,
-		locationInfo:  options.locationInfo,
-		latencyMatrix: options.locationLatencies,
+		id: options.id,
+		lm: options.latencyMatrix,
 	}
 	options.gorumsSrvOpts = append(options.gorumsSrvOpts, gorums.WithConnectCallback(func(ctx context.Context) {
 		srv.eventLoop.AddEvent(replicaConnected{ctx})
@@ -65,21 +63,15 @@ func NewServer(opts ...ServerOptions) *Server {
 	return srv
 }
 
-func (srv *Server) induceLatency(sender hotstuff.ID) {
-	if srv.location == hotstuff.DefaultLocation {
+// addNetworkDelay adds latency between this server and the sender based on
+// the latency between the two locations according to the latency matrix.
+func (srv *Server) addNetworkDelay(sender hotstuff.ID) {
+	if !srv.lm.Enabled() {
 		return
 	}
-	wriggleRoom := false
-	count := 1.0
-	if wriggleRoom && hotstuff.IsFaulty(sender) {
-		count = 1.2
-	}
-	senderLocation := srv.locationInfo[sender]
-	senderLatency := srv.latencyMatrix[senderLocation]
-	srv.logger.Debugf("latency from server %s to server %s is %s\n", srv.location, senderLocation, senderLatency)
-	senderLatency = time.Duration(float64(senderLatency) * count)
-	timer1 := time.NewTimer(senderLatency)
-	<-timer1.C
+	delay := srv.lm.Latency(srv.id, sender)
+	srv.logger.Debugf("Delay between %s and %s: %v\n", srv.lm.Location(srv.id), srv.lm.Location(sender), delay)
+	srv.lm.Delay(srv.id, sender)
 }
 
 // GetGorumsServer returns the underlying gorums Server.
@@ -127,8 +119,7 @@ func GetPeerIDFromContext(ctx context.Context, cfg modules.Configuration) (hotst
 				}
 			}
 		}
-		return 0, fmt.Errorf("could not find matching certificate %v", peerInfo)
-		//return 0, fmt.Errorf("could not find matching certificate")
+		return 0, fmt.Errorf("could not find matching certificate")
 	}
 
 	// If we're not using TLS, we'll fallback to checking the metadata
@@ -164,14 +155,16 @@ type serviceImpl struct {
 func (impl *serviceImpl) Propose(ctx gorums.ServerCtx, proposal *hotstuffpb.Proposal) {
 	id, err := GetPeerIDFromContext(ctx, impl.srv.configuration)
 	if err != nil {
-		impl.srv.logger.Infof("Failed to get client ID: %v", err)
+		impl.srv.logger.Warnf("Could not get replica ID: %v", err)
 		return
 	}
-
+	if impl.srv.opts.ShouldUseTree() {
+		id = hotstuff.ID(proposal.Block.Proposer)
+	}
 	proposal.Block.Proposer = uint32(id)
 	proposeMsg := hotstuffpb.ProposalFromProto(proposal)
 	proposeMsg.ID = id
-	impl.srv.induceLatency(id)
+	impl.srv.addNetworkDelay(id)
 	impl.srv.eventLoop.AddEvent(proposeMsg)
 }
 
@@ -179,10 +172,10 @@ func (impl *serviceImpl) Propose(ctx gorums.ServerCtx, proposal *hotstuffpb.Prop
 func (impl *serviceImpl) Vote(ctx gorums.ServerCtx, cert *hotstuffpb.PartialCert) {
 	id, err := GetPeerIDFromContext(ctx, impl.srv.configuration)
 	if err != nil {
-		impl.srv.logger.Infof("Failed to get client ID: %v", err)
+		impl.srv.logger.Warnf("Could not get replica ID: %v", err)
 		return
 	}
-	impl.srv.induceLatency(id)
+	impl.srv.addNetworkDelay(id)
 	impl.srv.eventLoop.AddEvent(hotstuff.VoteMsg{
 		ID:          id,
 		PartialCert: hotstuffpb.PartialCertFromProto(cert),
@@ -193,10 +186,10 @@ func (impl *serviceImpl) Vote(ctx gorums.ServerCtx, cert *hotstuffpb.PartialCert
 func (impl *serviceImpl) NewView(ctx gorums.ServerCtx, msg *hotstuffpb.SyncInfo) {
 	id, err := GetPeerIDFromContext(ctx, impl.srv.configuration)
 	if err != nil {
-		impl.srv.logger.Infof("Failed to get client ID: %v", err)
+		impl.srv.logger.Warnf("Could not get replica ID: %v", err)
 		return
 	}
-	impl.srv.induceLatency(id)
+	impl.srv.addNetworkDelay(id)
 	impl.srv.eventLoop.AddEvent(hotstuff.NewViewMsg{
 		ID:       id,
 		SyncInfo: hotstuffpb.SyncInfoFromProto(msg),
@@ -220,27 +213,14 @@ func (impl *serviceImpl) Fetch(_ gorums.ServerCtx, pb *hotstuffpb.BlockHash) (*h
 
 // Timeout handles an incoming TimeoutMsg.
 func (impl *serviceImpl) Timeout(ctx gorums.ServerCtx, msg *hotstuffpb.TimeoutMsg) {
-	var err error
-	timeoutMsg := hotstuffpb.TimeoutMsgFromProto(msg)
-	timeoutMsg.ID, err = GetPeerIDFromContext(ctx, impl.srv.configuration)
+	id, err := GetPeerIDFromContext(ctx, impl.srv.configuration)
 	if err != nil {
-		impl.srv.logger.Infof("Could not get ID of replica: %v", err)
+		impl.srv.logger.Warnf("Could not get replica ID: %v", err)
 	}
-	impl.srv.induceLatency(timeoutMsg.ID)
+	timeoutMsg := hotstuffpb.TimeoutMsgFromProto(msg)
+	timeoutMsg.ID = id
+	impl.srv.addNetworkDelay(id)
 	impl.srv.eventLoop.AddEvent(timeoutMsg)
-}
-
-// ReconfigurationRequest handles an incoming Reconfiguration request.
-func (impl *serviceImpl) ReconfigurationRequest(ctx gorums.ServerCtx, msg *hotstuffpb.ReconfigurationMsg) {
-	impl.srv.logger.Info("received reconfiguration request")
-	reconfigurationRequest := hotstuffpb.ReconfigurationFromProto(msg)
-	impl.srv.eventLoop.AddEvent(reconfigurationRequest)
-}
-
-// Update handles the incoming update message
-func (impl *serviceImpl) Update(ctx gorums.ServerCtx, msg *hotstuffpb.UpdateMsg) {
-	updateMsg := hotstuffpb.UpdateFromProto(msg)
-	impl.srv.eventLoop.AddEvent(updateMsg)
 }
 
 type replicaConnected struct {

@@ -2,22 +2,21 @@ package synchronizer_test
 
 import (
 	"testing"
-	"time"
 
 	"github.com/relab/hotstuff"
 
-	"github.com/golang/mock/gomock"
 	"github.com/relab/hotstuff/internal/mocks"
 	"github.com/relab/hotstuff/internal/testutil"
 	"github.com/relab/hotstuff/modules"
-	. "github.com/relab/hotstuff/synchronizer"
+	"github.com/relab/hotstuff/synchronizer"
+	"go.uber.org/mock/gomock"
 )
 
 func TestAdvanceViewQC(t *testing.T) {
 	const n = 4
 	ctrl := gomock.NewController(t)
 	builders := testutil.CreateBuilders(t, ctrl, n)
-	s := New(testutil.FixedTimeout(1000))
+	s := synchronizer.New(testutil.FixedTimeout(1000))
 	hs := mocks.NewMockConsensus(ctrl)
 	builders[0].Add(s, hs)
 
@@ -26,11 +25,10 @@ func TestAdvanceViewQC(t *testing.T) {
 
 	block := hotstuff.NewBlock(
 		hotstuff.GetGenesis().Hash(),
-		hotstuff.NewQuorumCert(nil, 0, hotstuff.GetGenesis().Hash(), make([]uint32, 0)),
+		hotstuff.NewQuorumCert(nil, 0, hotstuff.GetGenesis().Hash()),
 		"foo",
 		1,
 		2,
-		time.Now(),
 	)
 
 	var blockChain modules.BlockChain
@@ -41,7 +39,7 @@ func TestAdvanceViewQC(t *testing.T) {
 	// synchronizer should tell hotstuff to propose
 	hs.EXPECT().Propose(gomock.AssignableToTypeOf(hotstuff.NewSyncInfo()))
 
-	s.AdvanceView(hotstuff.NewSyncInfo().WithQC(qc), false)
+	s.AdvanceView(hotstuff.NewSyncInfo().WithQC(qc))
 
 	if s.View() != 2 {
 		t.Errorf("wrong view: expected: %v, got: %v", 2, s.View())
@@ -52,7 +50,7 @@ func TestAdvanceViewTC(t *testing.T) {
 	const n = 4
 	ctrl := gomock.NewController(t)
 	builders := testutil.CreateBuilders(t, ctrl, n)
-	s := New(testutil.FixedTimeout(100))
+	s := synchronizer.New(testutil.FixedTimeout(100))
 	hs := mocks.NewMockConsensus(ctrl)
 	builders[0].Add(s, hs)
 
@@ -64,7 +62,7 @@ func TestAdvanceViewTC(t *testing.T) {
 	// synchronizer should tell hotstuff to propose
 	hs.EXPECT().Propose(gomock.AssignableToTypeOf(hotstuff.NewSyncInfo()))
 
-	s.AdvanceView(hotstuff.NewSyncInfo().WithTC(tc), false)
+	s.AdvanceView(hotstuff.NewSyncInfo().WithTC(tc))
 
 	if s.View() != 2 {
 		t.Errorf("wrong view: expected: %v, got: %v", 2, s.View())

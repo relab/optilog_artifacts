@@ -5,6 +5,7 @@ import (
 	"sync/atomic"
 
 	"github.com/relab/hotstuff"
+	"github.com/relab/hotstuff/internal/tree"
 )
 
 // OptionID is the ID of an option.
@@ -38,11 +39,13 @@ type Options struct {
 	privateKey hotstuff.PrivateKey
 
 	shouldUseAggQC        bool
-	shouldUseHandel       bool
 	shouldVerifyVotesSync bool
-	shouldUseKuari        bool
-	sharedRandomSeed      int64
-	connectionMetadata    map[string]string
+
+	sharedRandomSeed   int64
+	connectionMetadata map[string]string
+
+	tree          tree.Tree
+	shouldUseTree bool
 }
 
 func (opts *Options) ensureSpace(id OptionID) {
@@ -51,6 +54,15 @@ func (opts *Options) ensureSpace(id OptionID) {
 		copy(newOpts, opts.options)
 		opts.options = newOpts
 	}
+}
+
+// SetShouldUseTree sets the ShouldUseTree setting to true.
+func (opts *Options) SetShouldUseTree() {
+	opts.shouldUseTree = true
+}
+
+func (opts *Options) ShouldUseTree() bool {
+	return opts.shouldUseTree
 }
 
 // Get returns the value associated with the given option ID.
@@ -87,11 +99,6 @@ func (opts *Options) ShouldUseAggQC() bool {
 	return opts.shouldUseAggQC
 }
 
-// ShouldUseHandel returns true if the Handel signature aggregation protocol should be used.
-func (opts *Options) ShouldUseHandel() bool {
-	return opts.shouldUseHandel
-}
-
 // ShouldVerifyVotesSync returns true if votes should be verified synchronously.
 // Enabling this should make the voting machine process votes synchronously.
 func (opts *Options) ShouldVerifyVotesSync() bool {
@@ -101,10 +108,6 @@ func (opts *Options) ShouldVerifyVotesSync() bool {
 // SharedRandomSeed returns a random number that is shared between all replicas.
 func (opts *Options) SharedRandomSeed() int64 {
 	return opts.sharedRandomSeed
-}
-
-func (opts *Options) ShouldUseKauri() bool {
-	return opts.shouldUseKuari
 }
 
 // ConnectionMetadata returns the metadata map that is sent when connecting to other replicas.
@@ -117,11 +120,6 @@ func (opts *Options) SetShouldUseAggQC() {
 	opts.shouldUseAggQC = true
 }
 
-// SetShouldUseHandel sets the ShouldUseHandel setting to true.
-func (opts *Options) SetShouldUseHandel() {
-	opts.shouldUseHandel = true
-}
-
 // SetShouldVerifyVotesSync sets the ShouldVerifyVotesSync setting to true.
 func (opts *Options) SetShouldVerifyVotesSync() {
 	opts.shouldVerifyVotesSync = true
@@ -132,10 +130,6 @@ func (opts *Options) SetSharedRandomSeed(seed int64) {
 	opts.sharedRandomSeed = seed
 }
 
-func (opts *Options) SetShouldUseKauri() {
-	opts.shouldUseKuari = true
-}
-
 // SetConnectionMetadata sets the value of a key in the connection metadata map.
 //
 // NOTE: if the value contains binary data, the key must have the "-bin" suffix.
@@ -143,4 +137,13 @@ func (opts *Options) SetShouldUseKauri() {
 // See: https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md#storing-binary-data-in-metadata
 func (opts *Options) SetConnectionMetadata(key string, value string) {
 	opts.connectionMetadata[key] = value
+}
+
+func (opts *Options) SetTree(t tree.Tree) {
+	opts.tree = t
+}
+
+// Tree returns the tree configuration.
+func (opts *Options) Tree() tree.Tree {
+	return opts.tree
 }

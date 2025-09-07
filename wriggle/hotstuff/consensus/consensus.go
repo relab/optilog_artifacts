@@ -9,7 +9,6 @@ import (
 	"github.com/relab/hotstuff/eventloop"
 	"github.com/relab/hotstuff/logging"
 	"github.com/relab/hotstuff/modules"
-
 	"github.com/relab/hotstuff/synchronizer"
 )
 
@@ -50,28 +49,23 @@ type consensusBase struct {
 	forkHandler    modules.ForkHandlerExt
 	leaderRotation modules.LeaderRotation
 	logger         logging.Logger
-	ranking        modules.Ranking
 	opts           *modules.Options
 	synchronizer   modules.Synchronizer
 
-	handel modules.Handel
+	kauri modules.Kauri
 
 	lastVote hotstuff.View
 
-	mut        sync.Mutex
-	bExec      *hotstuff.Block
-	committees map[int][]hotstuff.ID
-	index      int
+	mut   sync.Mutex
+	bExec *hotstuff.Block
 }
 
 // New returns a new Consensus instance based on the given Rules implementation.
 func New(impl Rules) modules.Consensus {
 	return &consensusBase{
-		impl:       impl,
-		lastVote:   0,
-		bExec:      hotstuff.GetGenesis(),
-		committees: make(map[int][]hotstuff.ID),
-		index:      1,
+		impl:     impl,
+		lastVote: 0,
+		bExec:    hotstuff.GetGenesis(),
 	}
 }
 
@@ -92,7 +86,7 @@ func (cs *consensusBase) InitModule(mods *modules.Core) {
 		&cs.synchronizer,
 	)
 
-	mods.TryGet(&cs.handel)
+	mods.TryGet(&cs.kauri)
 
 	if mod, ok := cs.impl.(modules.Module); ok {
 		mod.InitModule(mods)
@@ -101,7 +95,6 @@ func (cs *consensusBase) InitModule(mods *modules.Core) {
 	cs.eventLoop.RegisterHandler(hotstuff.ProposeMsg{}, func(event any) {
 		cs.OnPropose(event.(hotstuff.ProposeMsg))
 	})
-	mods.TryGet(&cs.ranking)
 }
 
 func (cs *consensusBase) CommittedBlock() *hotstuff.Block {
@@ -130,62 +123,6 @@ func (cs *consensusBase) Propose(cert hotstuff.SyncInfo) {
 			cs.logger.Errorf("Could not find block for QC: %s", qc)
 		}
 	}
-	// This is the code for reconfiguration of committees
-	// if !cs.isCommitteeComputed {
-	// 	cs.committees = cs.configuration.GetCommittees(20, true)
-	// 	cs.isCommitteeComputed = true
-	// 	cs.logger.Info("committes", cs.committees)
-	// }
-	//cs.index = cs.index % len(cs.committees)
-	//cs.index = 1
-	//count := 2
-	// if cs.synchronizer.View()%100 == 0 && cs.index <= 2 {
-
-	// 	suspicions := cs.ranking.GetSuspectedNodes()
-	// 	cs.logger.Info("suspicions are ", suspicions)
-	// 	ids := make([]hotstuff.ID, 0, len(suspicions))
-	// 	for id := range suspicions {
-	// 		ids = append(ids, id)
-	// 	}
-	// 	sort.SliceStable(ids, func(i, j int) bool {
-	// 		return suspicions[ids[i]] > suspicions[ids[j]]
-	// 	})
-
-	// 	removeNodes := make([]hotstuff.ID, 0)
-	// 	for index, id := range ids {
-	// 		if index <= count {
-	// 			removeNodes = append(removeNodes, id)
-	// 		} else {
-	// 			break
-	// 		}
-	// 	}
-	// 	committee := make([]hotstuff.ID, 0)
-	// 	cs.logger.Info("committee removed nodes are ", removeNodes)
-	// 	for id := range cs.configuration.Replicas() {
-	// 		found := false
-	// 		for _, badNode := range removeNodes {
-	// 			if id == badNode {
-	// 				found = true
-	// 				break
-	// 			}
-	// 		}
-	// 		if !found {
-	// 			committee = append(committee, id)
-	// 		}
-	// 	}
-	// 	reconfigurationRequest := hotstuff.ReconfigurationMsg{
-	// 		QuorumSize:        hotstuff.QuorumSize(len(committee)),
-	// 		ActiveReplicas:    committee,
-	// 		QuorumCertificate: qc,
-	// 		View:              cs.synchronizer.View(),
-	// 	}
-	// 	cs.configuration.Reconfiguration(reconfigurationRequest)
-	// 	cs.eventLoop.AddEvent(reconfigurationRequest)
-	// 	count++
-	// 	cs.index++
-	// 	cs.logger.Info("reconfig request ", reconfigurationRequest)
-	// 	return
-	// }
 
 	ctx, cancel := synchronizer.TimeoutContext(cs.eventLoop.Context(), cs.eventLoop)
 	defer cancel()
@@ -204,36 +141,29 @@ func (cs *consensusBase) Propose(cert hotstuff.SyncInfo) {
 			return
 		}
 	} else {
-		var complaints []*hotstuff.Complaint
-		if cs.ranking != nil {
-			complaints = cs.ranking.GetPendingComplaints()
-		}
-
 		proposal = hotstuff.ProposeMsg{
-			ID:         cs.opts.ID(),
-			Complaints: complaints,
+			ID: cs.opts.ID(),
 			Block: hotstuff.NewBlock(
 				qc.BlockHash(),
 				qc,
 				cmd,
 				cs.synchronizer.View(),
 				cs.opts.ID(),
-				time.Now(),
 			),
 		}
-		//cs.logger.Info("size of the proposal ", size.Of(proposal.Block.Time()))
+
 		if aggQC, ok := cert.AggQC(); ok && cs.opts.ShouldUseAggQC() {
 			proposal.AggregateQC = &aggQC
 		}
 	}
 
 	cs.blockChain.Store(proposal.Block)
-
-	cs.configuration.Propose(proposal)
+	// kauri sends the proposal to only the children
+	if cs.kauri == nil {
+		cs.configuration.Propose(proposal)
+	}
 	// self vote
 	cs.OnPropose(proposal)
-	//cs.configuration.Update(*proposal.Block)
-	//cs.eventLoop.AddEvent(hotstuff.BlockBytesEvent{NumberBytes: uint32(size.Of(proposal))})
 }
 
 func (cs *consensusBase) OnPropose(proposal hotstuff.ProposeMsg) { //nolint:gocyclo
@@ -254,23 +184,17 @@ func (cs *consensusBase) OnPropose(proposal hotstuff.ProposeMsg) { //nolint:gocy
 			return
 		}
 	}
-	if len(proposal.Complaints) > 0 && cs.ranking != nil {
-		cs.ranking.CommitComplaints(proposal.Complaints)
-		cs.eventLoop.AddEvent(hotstuff.CheckLatencyVector{
-			LatencyVector: block.QuorumCert().LatencyVector(),
-			Proposer:      block.Proposer(),
-		})
-	}
+
 	if !cs.crypto.VerifyQuorumCert(block.QuorumCert()) {
 		cs.logger.Info("OnPropose: invalid QC")
 		return
 	}
 
 	// ensure the block came from the leader.
-	// if proposal.ID != cs.leaderRotation.GetLeader(block.View()) {
-	// 	cs.logger.Info("OnPropose: block was not proposed by the expected leader")
-	// 	return
-	// }
+	if proposal.ID != cs.leaderRotation.GetLeader(block.View()) {
+		cs.logger.Info("OnPropose: block was not proposed by the expected leader")
+		return
+	}
 
 	if !cs.impl.VoteRule(proposal) {
 		cs.logger.Info("OnPropose: Block not voted for")
@@ -292,9 +216,9 @@ func (cs *consensusBase) OnPropose(proposal hotstuff.ProposeMsg) { //nolint:gocy
 	cs.blockChain.Store(block)
 
 	if b := cs.impl.CommitRule(block); b != nil {
-		cs.Commit(b)
+		cs.commit(b)
 	}
-	cs.synchronizer.AdvanceView(hotstuff.NewSyncInfo().WithQC(block.QuorumCert()), false)
+	cs.synchronizer.AdvanceView(hotstuff.NewSyncInfo().WithQC(block.QuorumCert()))
 
 	if block.View() <= cs.lastVote {
 		cs.logger.Info("OnPropose: block view too old")
@@ -309,12 +233,10 @@ func (cs *consensusBase) OnPropose(proposal hotstuff.ProposeMsg) { //nolint:gocy
 
 	cs.lastVote = block.View()
 
-	if cs.handel != nil {
-		// let Handel handle the voting
-		cs.handel.Begin(pc)
+	if cs.kauri != nil {
+		cs.kauri.Begin(pc, proposal)
 		return
 	}
-
 	leaderID := cs.leaderRotation.GetLeader(cs.lastVote + 1)
 	if leaderID == cs.opts.ID() {
 		cs.eventLoop.AddEvent(hotstuff.VoteMsg{ID: cs.opts.ID(), PartialCert: pc})
@@ -326,15 +248,11 @@ func (cs *consensusBase) OnPropose(proposal hotstuff.ProposeMsg) { //nolint:gocy
 		cs.logger.Warnf("Replica with ID %d was not found!", leaderID)
 		return
 	}
-	if cs.ranking != nil && cs.opts.ID() <= hotstuff.ID(cs.index) {
-		latency := cs.configuration.GetLatency(cs.opts.ID(), leaderID)
-		timer := time.NewTimer(latency)
-		<-timer.C
-	}
+
 	leader.Vote(pc)
 }
 
-func (cs *consensusBase) Commit(block *hotstuff.Block) {
+func (cs *consensusBase) commit(block *hotstuff.Block) {
 	cs.mut.Lock()
 	// can't recurse due to requiring the mutex, so we use a helper instead.
 	err := cs.commitInner(block)
@@ -365,6 +283,7 @@ func (cs *consensusBase) commitInner(block *hotstuff.Block) error {
 	} else {
 		return fmt.Errorf("failed to locate block: %s", block.Parent())
 	}
+	cs.eventLoop.AddEvent(hotstuff.ConsensusLatencyEvent{Latency: time.Since(block.Timestamp())})
 	cs.logger.Debug("EXEC: ", block)
 	cs.executor.Exec(block)
 	cs.bExec = block

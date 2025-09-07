@@ -39,8 +39,3 @@ message ViewTimeouts {
   // Number of view timeouts.
   uint64 Timeouts = 3;
 }
-
-message SentBytes {
-  Event Event = 1;
-  uint64 sendEventrd = 2;
-}

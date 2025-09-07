@@ -22,6 +22,9 @@ func TestHandler(t *testing.T) {
 	defer cancel()
 	go el.Run(ctx)
 
+	// wait for the event loop to start
+	time.Sleep(1 * time.Millisecond)
+
 	want := testEvent(42)
 	el.AddEvent(want)
 
@@ -42,7 +45,7 @@ func TestHandler(t *testing.T) {
 	}
 }
 
-func TestObserver(t *testing.T) {
+func TestPrioritize(t *testing.T) {
 	type eventData struct {
 		event   any
 		handler bool
@@ -53,9 +56,9 @@ func TestObserver(t *testing.T) {
 	el.RegisterHandler(testEvent(0), func(event any) {
 		c <- eventData{event: event, handler: true}
 	})
-	el.RegisterObserver(testEvent(0), func(event any) {
+	el.RegisterHandler(testEvent(0), func(event any) {
 		c <- eventData{event: event, handler: false}
-	})
+	}, eventloop.Prioritize())
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -73,11 +76,11 @@ func TestObserver(t *testing.T) {
 		}
 
 		if i == 0 && data.handler {
-			t.Fatalf("expected observer to run first")
+			t.Fatalf("expected prioritized handler to run first")
 		}
 
 		if i == 1 && !data.handler {
-			t.Fatalf("expected handler to run second")
+			t.Fatalf("expected standard handler to run second")
 		}
 
 		e, ok := data.event.(testEvent)
@@ -107,7 +110,7 @@ func TestTicker(t *testing.T) {
 	go el.Run(ctx)
 
 	rate := 100 * time.Millisecond
-	id := el.AddTicker(rate, func(tick time.Time) (event any) { return testEvent(1) })
+	id := el.AddTicker(rate, func(_ time.Time) (_ any) { return testEvent(1) })
 
 	// sleep a little less than 1 second to ensure we get the expected amount of ticks
 	time.Sleep(time.Second - rate/4)
@@ -157,15 +160,15 @@ func TestDelayedEvent(t *testing.T) {
 	}
 }
 
-func BenchmarkEventLoopWithObservers(b *testing.B) {
+func BenchmarkEventLoopWithPrioritize(b *testing.B) {
 	el := eventloop.New(100)
 
 	for i := 0; i < 100; i++ {
-		el.RegisterObserver(testEvent(0), func(event any) {
+		el.RegisterHandler(testEvent(0), func(event any) {
 			if event.(testEvent) != 1 {
-				panic("Unexpected value observed")
+				panic("unexpected value")
 			}
-		})
+		}, eventloop.Prioritize())
 	}
 
 	for i := 0; i < b.N; i++ {

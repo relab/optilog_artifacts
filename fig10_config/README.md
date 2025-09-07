@@ -2,6 +2,7 @@
 
 The experiments described in Figure 10 use the [HotStuff repository](https://github.com/relab/hotstuff). These experiments are designed to run on a cluster, with each node hosting one or more replicas.
 We used Ubuntu 22.04 as the operating system on the nodes in the Cluster.
+These experiments utilize four distinct network configurations, with each configuration evaluated under five different protocol settings. For each experiment, the average throughput and latency are measured, and results are reported along with the 95% confidence interval.
 
 #### Prerequisites
 
@@ -16,11 +17,17 @@ We used Ubuntu 22.04 as the operating system on the nodes in the Cluster.
     ```sh
     ssh -o UpdateHostKeys=yes -o PreferredAuthentications=publickey -o StrictHostKeyChecking=no node_name echo "hello node_name"
     ```
+4. **Configure the SSH Configuration File:**  
+    A sample SSH configuration file (`ssh_config`) is provided. Review and modify this file to accurately reflect the hostnames, user credentials, and connection parameters specific to your cluster environment.
+
+5. **Prepare Configuration Files:**  
+    Edit the sample configuration files (`config_21.cue`, `config_43.cue`, and `config_73.cue`) by replacing all instances of `bbchain` with the actual hostnames of the cluster nodes.
 
 #### Building the HotStuff Binary
 
 On the controller node, build the HotStuff binary with:
 ```sh
+cd hotstuff
 make install
 make
 ```
@@ -28,7 +35,8 @@ make
 #### Running the Experiment
 
 
-To run the experiment described in Figure 10, adjust the `--cue` parameter based on the desired cluster size. Remove the `--modules` parameter if running the standard HotStuff protocol. For HotStuff with round-robin leader rotation, use `--leader-rotation round-robin`.
+To run the experiment described in Figure 10, adjust the `--cue` parameter based on the desired cluster size.
+Remove the `--modules` parameter if running the standard HotStuff protocol. For HotStuff with round-robin leader rotation, use `--leader-rotation round-robin`.
 
 **Example command for running the experiment with 73 nodes:**
 

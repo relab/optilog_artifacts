@@ -4,6 +4,7 @@ package keygen
 
 import (
 	"crypto/ecdsa"
+	"crypto/ed25519"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
@@ -18,6 +19,7 @@ import (
 	"github.com/relab/hotstuff"
 	"github.com/relab/hotstuff/crypto/bls12"
 	ecdsacrypto "github.com/relab/hotstuff/crypto/ecdsa"
+	"github.com/relab/hotstuff/crypto/eddsa"
 )
 
 // GenerateECDSAPrivateKey returns a new ECDSA private key.
@@ -27,6 +29,15 @@ func GenerateECDSAPrivateKey() (pk *ecdsa.PrivateKey, err error) {
 		return nil, err
 	}
 	return pk, nil
+}
+
+// GenerateED25519Key generates ed25519 key.
+func GenerateED25519Key() (pub ed25519.PublicKey, pk ed25519.PrivateKey, err error) {
+	pub, pk, err = ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		return nil, nil, err
+	}
+	return pub, pk, nil
 }
 
 // GenerateRootCert generates a self-signed TLS certificate to act as a CA.
@@ -90,31 +101,38 @@ func GenerateTLSCert(id hotstuff.ID, hosts []string, parent *x509.Certificate, s
 // PrivateKeyToPEM encodes the private key in PEM format.
 func PrivateKeyToPEM(key hotstuff.PrivateKey) ([]byte, error) {
 	var (
-		marshalled []byte
-		keyType    string
-		err        error
+		marshaled []byte
+		keyType   string
+		err       error
 	)
 	switch k := key.(type) {
 	case *ecdsa.PrivateKey:
-		marshalled, err = x509.MarshalECPrivateKey(k)
+		marshaled, err = x509.MarshalECPrivateKey(k)
 		if err != nil {
 			return nil, err
 		}
 		keyType = ecdsacrypto.PrivateKeyFileType
+	case ed25519.PrivateKey:
+		marshaled, err = x509.MarshalPKCS8PrivateKey(k)
+		if err != nil {
+			return nil, err
+		}
+		keyType = eddsa.PrivateKeyFileType
 	case *bls12.PrivateKey:
-		marshalled = k.ToBytes()
+		marshaled = k.ToBytes()
 		keyType = bls12.PrivateKeyFileType
 	}
+
 	b := &pem.Block{
 		Type:  keyType,
-		Bytes: marshalled,
+		Bytes: marshaled,
 	}
 	return pem.EncodeToMemory(b), nil
 }
 
 // WritePrivateKeyFile writes a private key to the specified file.
 func WritePrivateKeyFile(key hotstuff.PrivateKey, filePath string) (err error) {
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
 		return
 	}
@@ -136,33 +154,38 @@ func WritePrivateKeyFile(key hotstuff.PrivateKey, filePath string) (err error) {
 // PublicKeyToPEM encodes the public key in PEM format.
 func PublicKeyToPEM(key hotstuff.PublicKey) ([]byte, error) {
 	var (
-		marshalled []byte
-		keyType    string
-		err        error
+		marshaled []byte
+		keyType   string
+		err       error
 	)
 	switch k := key.(type) {
 	case *ecdsa.PublicKey:
-		marshalled, err = x509.MarshalPKIXPublicKey(k)
+		marshaled, err = x509.MarshalPKIXPublicKey(k)
 		if err != nil {
 			return nil, err
 		}
 		keyType = ecdsacrypto.PublicKeyFileType
+	case ed25519.PublicKey:
+		marshaled, err = x509.MarshalPKIXPublicKey(k)
+		if err != nil {
+			return nil, err
+		}
+		keyType = eddsa.PublicKeyFileType
 	case *bls12.PublicKey:
-		marshalled = k.ToBytes()
+		marshaled = k.ToBytes()
 		keyType = bls12.PublicKeyFileType
 	}
 
 	b := &pem.Block{
 		Type:  keyType,
-		Bytes: marshalled,
+		Bytes: marshaled,
 	}
-
 	return pem.EncodeToMemory(b), nil
 }
 
 // WritePublicKeyFile writes a public key to the specified file.
 func WritePublicKeyFile(key hotstuff.PublicKey, filePath string) (err error) {
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
 	if err != nil {
 		return
 	}
@@ -184,7 +207,7 @@ func WritePublicKeyFile(key hotstuff.PublicKey, filePath string) (err error) {
 
 // WriteCertFile writes an x509 certificate to a file.
 func WriteCertFile(cert *x509.Certificate, file string) (err error) {
-	f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
 	if err != nil {
 		return
 	}
@@ -209,12 +232,22 @@ func ParsePrivateKey(buf []byte) (key hotstuff.PrivateKey, err error) {
 	switch b.Type {
 	case ecdsacrypto.PrivateKeyFileType:
 		key, err = x509.ParseECPrivateKey(b.Bytes)
+	case eddsa.PrivateKeyFileType:
+		genericKey, err := x509.ParsePKCS8PrivateKey(b.Bytes)
+		if err != nil {
+			return nil, err
+		}
+		var ok bool
+		key, ok = genericKey.(ed25519.PrivateKey)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse key")
+		}
 	case bls12.PrivateKeyFileType:
 		k := &bls12.PrivateKey{}
 		k.FromBytes(b.Bytes)
 		key = k
 	default:
-		return nil, fmt.Errorf("file type did not match any known types")
+		return nil, fmt.Errorf("private key file type did not match any known types %v", b.Type)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse key: %w", err)
@@ -240,6 +273,8 @@ func ParsePublicKey(buf []byte) (key hotstuff.PublicKey, err error) {
 	switch b.Type {
 	case ecdsacrypto.PublicKeyFileType:
 		key, err = x509.ParsePKIXPublicKey(b.Bytes)
+	case eddsa.PublicKeyFileType:
+		key, err = x509.ParsePKIXPublicKey(b.Bytes)
 	case bls12.PublicKeyFileType:
 		k := &bls12.PublicKey{}
 		err = k.FromBytes(b.Bytes)
@@ -248,7 +283,7 @@ func ParsePublicKey(buf []byte) (key hotstuff.PublicKey, err error) {
 		}
 		key = k
 	default:
-		return nil, fmt.Errorf("file type did not match any known types")
+		return nil, fmt.Errorf("public key file type did not match any known types %v", b.Type)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse key: %w", err)
@@ -316,13 +351,21 @@ func GenerateKeyChain(id hotstuff.ID, validFor []string, crypto string, ca *x509
 	certPEM := CertToPEM(cert)
 
 	var privateKey hotstuff.PrivateKey
+	var publicKey hotstuff.PublicKey
 	switch crypto {
 	case "ecdsa":
 		privateKey = ecdsaKey
+		publicKey = privateKey.Public()
 	case "bls12":
 		privateKey, err = bls12.GeneratePrivateKey()
 		if err != nil {
 			return KeyChain{}, fmt.Errorf("failed to generate bls12-381 private key: %w", err)
+		}
+		publicKey = privateKey.Public()
+	case "eddsa":
+		publicKey, privateKey, err = GenerateED25519Key()
+		if err != nil {
+			return KeyChain{}, fmt.Errorf("failed to generate ed25519 key: %w", err)
 		}
 	default:
 		return KeyChain{}, fmt.Errorf("unknown crypto implementation: %s", crypto)
@@ -333,7 +376,7 @@ func GenerateKeyChain(id hotstuff.ID, validFor []string, crypto string, ca *x509
 		return KeyChain{}, err
 	}
 
-	publicKeyPEM, err := PublicKeyToPEM(privateKey.Public())
+	publicKeyPEM, err := PublicKeyToPEM(publicKey)
 	if err != nil {
 		return KeyChain{}, err
 	}

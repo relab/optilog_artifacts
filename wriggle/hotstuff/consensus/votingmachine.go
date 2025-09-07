@@ -17,7 +17,6 @@ type VotingMachine struct {
 	eventLoop     *eventloop.EventLoop
 	logger        logging.Logger
 	synchronizer  modules.Synchronizer
-	ranking       modules.Ranking
 	opts          *modules.Options
 
 	mut           sync.Mutex
@@ -42,7 +41,7 @@ func (vm *VotingMachine) InitModule(mods *modules.Core) {
 		&vm.synchronizer,
 		&vm.opts,
 	)
-	mods.TryGet(&vm.ranking)
+
 	vm.eventLoop.RegisterHandler(hotstuff.VoteMsg{}, func(event any) { vm.OnVote(event.(hotstuff.VoteMsg)) })
 }
 
@@ -78,13 +77,6 @@ func (vm *VotingMachine) OnVote(vote hotstuff.VoteMsg) {
 
 	if block.View() <= vm.synchronizer.HighQC().View() {
 		// too old
-		if vm.ranking != nil {
-			vm.ranking.AddComplaint(&hotstuff.Complaint{
-				Complainee:    vote.ID,
-				Complainant:   vm.opts.ID(),
-				ComplaintType: hotstuff.Suspicion,
-			})
-		}
 		return
 	}
 
@@ -122,7 +114,7 @@ func (vm *VotingMachine) verifyCert(cert hotstuff.PartialCert, block *hotstuff.B
 	votes = append(votes, cert)
 	vm.verifiedVotes[cert.BlockHash()] = votes
 
-	if len(votes) < vm.configuration.QuorumSize(block.View()) {
+	if len(votes) < vm.configuration.QuorumSize() {
 		return
 	}
 

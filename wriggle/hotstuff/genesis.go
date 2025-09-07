@@ -2,9 +2,15 @@ package hotstuff
 
 import "time"
 
-var genesisBlock = NewBlock(Hash{}, QuorumCert{}, "", 0, 0, time.Now())
+// genesisBlock is initialized at package initialization time.
+var genesisBlock = func() *Block {
+	ts := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	b := NewBlock(Hash{}, QuorumCert{}, "", 0, 0)
+	b.SetTimestamp(ts)
+	return b
+}()
 
-// GetGenesis returns a pointer to the genesis block, the starting point for the hotstuff blockchain.
+// GetGenesis returns the genesis block.
 func GetGenesis() *Block {
 	return genesisBlock
 }

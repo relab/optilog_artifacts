@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"net"
 	"sync"
 	"testing"
@@ -13,12 +12,12 @@ import (
 
 	"github.com/relab/hotstuff/modules"
 
-	"github.com/golang/mock/gomock"
 	"github.com/relab/gorums"
 	"github.com/relab/hotstuff"
 	"github.com/relab/hotstuff/crypto/keygen"
 	"github.com/relab/hotstuff/eventloop"
 	"github.com/relab/hotstuff/internal/testutil"
+	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -34,7 +33,7 @@ func TestConnect(t *testing.T) {
 		defer teardown()
 		td.builders.Build()
 
-		cfg := NewConfig(td.creds, make(map[hotstuff.ID]string), gorums.WithDialTimeout(time.Second))
+		cfg := NewConfig(td.creds, gorums.WithDialTimeout(time.Second))
 
 		builder.Add(cfg)
 		builder.Build()
@@ -57,7 +56,7 @@ func testBase(t *testing.T, typ any, send func(modules.Configuration), handle ev
 		serverTeardown := createServers(t, td, ctrl)
 		defer serverTeardown()
 
-		cfg := NewConfig(td.creds, make(map[hotstuff.ID]string), gorums.WithDialTimeout(time.Second))
+		cfg := NewConfig(td.creds, gorums.WithDialTimeout(time.Second))
 		td.builders[0].Add(cfg)
 		hl := td.builders.Build()
 
@@ -90,8 +89,8 @@ func TestPropose(t *testing.T) {
 		ID: 1,
 		Block: hotstuff.NewBlock(
 			hotstuff.GetGenesis().Hash(),
-			hotstuff.NewQuorumCert(nil, 0, hotstuff.GetGenesis().Hash(), make([]uint32, 0)),
-			"foo", 1, 1, time.Now(),
+			hotstuff.NewQuorumCert(nil, 0, hotstuff.GetGenesis().Hash()),
+			"foo", 1, 1,
 		),
 	}
 	testBase(t, want, func(cfg modules.Configuration) {
@@ -229,74 +228,6 @@ func createServers(t *testing.T, td testData, _ *gomock.Controller) (teardown fu
 	return func() {
 		for _, srv := range servers {
 			srv.Stop()
-		}
-	}
-}
-
-func TestCommittees(t *testing.T) {
-	locationInfo := map[hotstuff.ID]string{
-		hotstuff.ID(1):  "Frankfurt",
-		hotstuff.ID(2):  "Frankfurt",
-		hotstuff.ID(3):  "Paris",
-		hotstuff.ID(4):  "Paris",
-		hotstuff.ID(5):  "Sydney",
-		hotstuff.ID(6):  "Sydney",
-		hotstuff.ID(7):  "Tokyo",
-		hotstuff.ID(8):  "Tokyo",
-		hotstuff.ID(9):  "Ohio",
-		hotstuff.ID(10): "Ohio",
-		hotstuff.ID(11): "London",
-		hotstuff.ID(12): "London",
-		hotstuff.ID(13): "Frankfurt",
-		hotstuff.ID(14): "Frankfurt",
-		hotstuff.ID(15): "Paris",
-		hotstuff.ID(16): "Paris",
-		hotstuff.ID(17): "Sydney",
-		hotstuff.ID(18): "Sydney",
-		hotstuff.ID(19): "Tokyo",
-		hotstuff.ID(20): "Tokyo",
-		hotstuff.ID(21): "Ohio",
-		hotstuff.ID(22): "Ohio",
-		hotstuff.ID(23): "London",
-		hotstuff.ID(24): "London",
-	}
-	committees := GetCommittees(4, false, locationInfo)
-	for id, committee := range committees {
-		fmt.Printf("t: %v,%v\n", committee, id)
-	}
-}
-
-func TestCommittees1(t *testing.T) {
-	locationInfo := map[hotstuff.ID]string{
-		hotstuff.ID(1):  "Frankfurt",
-		hotstuff.ID(2):  "Frankfurt",
-		hotstuff.ID(3):  "Paris",
-		hotstuff.ID(4):  "Paris",
-		hotstuff.ID(5):  "Sydney",
-		hotstuff.ID(6):  "Sydney",
-		hotstuff.ID(7):  "Tokyo",
-		hotstuff.ID(8):  "Tokyo",
-		hotstuff.ID(9):  "Ohio",
-		hotstuff.ID(10): "Ohio",
-		hotstuff.ID(11): "London",
-		hotstuff.ID(12): "London",
-		hotstuff.ID(13): "Frankfurt",
-		hotstuff.ID(14): "Frankfurt",
-		hotstuff.ID(15): "Paris",
-		hotstuff.ID(16): "Paris",
-		hotstuff.ID(17): "Sydney",
-		hotstuff.ID(18): "Sydney",
-		hotstuff.ID(19): "Tokyo",
-		hotstuff.ID(20): "Tokyo",
-		hotstuff.ID(21): "Ohio",
-		hotstuff.ID(22): "Ohio",
-		hotstuff.ID(23): "London",
-		hotstuff.ID(24): "London",
-	}
-	committees := GetCommittees(8, true, locationInfo)
-	for _, committee := range committees {
-		for _, node := range committee {
-			fmt.Printf("t: %v,%v\n", node, locationInfo[node])
 		}
 	}
 }

@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"reflect"
+	"slices"
 	"strings"
 	"time"
 
@@ -18,8 +20,6 @@ import (
 	"github.com/relab/hotstuff/logging"
 	"github.com/relab/hotstuff/modules"
 	"github.com/relab/hotstuff/synchronizer"
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 )
 
 // NodeID is an ID that is unique to a node in the network.
@@ -143,7 +143,7 @@ func (n *Network) createTwinsNodes(nodes []NodeID, _ Scenario, consensusName str
 			consensus.New(consensusModule),
 			consensus.NewVotingMachine(),
 			crypto.NewCache(ecdsa.New(), 100),
-			synchronizer.New(FixedTimeout(0)),
+			synchronizer.New(FixedTimeout(1*time.Millisecond)),
 			logging.NewWithDest(&node.log, fmt.Sprintf("r%dn%d", nodeID.ReplicaID, nodeID.NetworkID)),
 			// twins-specific:
 			&configuration{network: n, node: node},
@@ -240,9 +240,6 @@ func (c *configuration) InitModule(mods *modules.Core) {
 	}
 }
 
-func (c *configuration) GetLatency(sender hotstuff.ID, receiver hotstuff.ID) time.Duration {
-	return time.Now().Sub(time.Now())
-}
 func (c *configuration) broadcastMessage(message any) {
 	for id := range c.network.replicas {
 		if id == c.node.id.ReplicaID {
@@ -304,10 +301,6 @@ func (c *configuration) Replica(id hotstuff.ID) (r modules.Replica, ok bool) {
 	return nil, false
 }
 
-func (c *configuration) GetCommittees(size int, isPhase bool) map[int][]hotstuff.ID {
-	return make(map[int][]hotstuff.ID)
-}
-
 // SubConfig returns a subconfiguration containing the replicas specified in the ids slice.
 func (c *configuration) SubConfig(ids []hotstuff.ID) (sub modules.Configuration, err error) {
 	subConfig := hotstuff.NewIDSet()
@@ -321,17 +314,13 @@ func (c *configuration) SubConfig(ids []hotstuff.ID) (sub modules.Configuration,
 	}, nil
 }
 
-func (c *configuration) Reconfiguration(hotstuff.ReconfigurationMsg) {}
-
-func (c *configuration) Update(hotstuff.Block) {}
-
 // Len returns the number of replicas in the configuration.
 func (c *configuration) Len() int {
 	return len(c.network.replicas)
 }
 
 // QuorumSize returns the size of a quorum.
-func (c *configuration) QuorumSize(view hotstuff.View) int {
+func (c *configuration) QuorumSize() int {
 	return hotstuff.QuorumSize(c.Len())
 }
 
@@ -398,12 +387,6 @@ func (r *replica) Metadata() map[string]string {
 	return r.config.network.replicas[r.id][0].opts.ConnectionMetadata()
 }
 
-func (r *replica) Active() bool {
-	return true
-}
-
-func (r *replica) SetActive(bool) {}
-
 // NodeSet is a set of network ids.
 type NodeSet map[uint32]struct{}
 
@@ -420,8 +403,7 @@ func (s NodeSet) Contains(v uint32) bool {
 
 // MarshalJSON returns a JSON representation of the node set.
 func (s NodeSet) MarshalJSON() ([]byte, error) {
-	ids := maps.Keys(s)
-	slices.Sort(ids)
+	ids := slices.Sorted(maps.Keys(s))
 	return json.Marshal(ids)
 }
 
@@ -483,12 +465,12 @@ func (tm *timeoutManager) InitModule(mods *modules.Core) {
 		&tm.eventLoop,
 	)
 
-	tm.eventLoop.RegisterObserver(tick{}, func(event any) {
+	tm.eventLoop.RegisterHandler(tick{}, func(_ any) {
 		tm.advance()
-	})
-	tm.eventLoop.RegisterObserver(synchronizer.ViewChangeEvent{}, func(event any) {
+	}, eventloop.Prioritize())
+	tm.eventLoop.RegisterHandler(synchronizer.ViewChangeEvent{}, func(event any) {
 		tm.viewChange(event.(synchronizer.ViewChangeEvent))
-	})
+	}, eventloop.Prioritize())
 }
 
 // FixedTimeout returns an ExponentialTimeout with a max exponent of 0.
@@ -500,8 +482,7 @@ type fixedDuration struct {
 	timeout time.Duration
 }
 
-func (d fixedDuration) Duration() time.Duration     { return d.timeout }
-func (d fixedDuration) ViewStarted()                {}
-func (d fixedDuration) ViewSucceeded()              {}
-func (d fixedDuration) ViewTimeout()                {}
-func (d fixedDuration) StartTimeout() time.Duration { return d.timeout }
+func (d fixedDuration) Duration() time.Duration { return d.timeout }
+func (d fixedDuration) ViewStarted()            {}
+func (d fixedDuration) ViewSucceeded()          {}
+func (d fixedDuration) ViewTimeout()            {}

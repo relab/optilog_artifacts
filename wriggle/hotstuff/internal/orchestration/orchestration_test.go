@@ -8,84 +8,143 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
 	"time"
 
+	"github.com/relab/hotstuff/internal/config"
 	"github.com/relab/hotstuff/internal/orchestration"
-	"github.com/relab/hotstuff/internal/proto/orchestrationpb"
 	"github.com/relab/hotstuff/internal/protostream"
+	"github.com/relab/hotstuff/internal/test"
+	"github.com/relab/hotstuff/internal/tree"
 	"github.com/relab/hotstuff/logging"
 	"github.com/relab/hotstuff/metrics"
 	"github.com/relab/iago/iagotest"
-	"google.golang.org/protobuf/types/known/durationpb"
 )
 
-func TestOrchestration(t *testing.T) {
-	run := func(consensusImpl string, crypto string, mods []string) {
-		controllerStream, workerStream := net.Pipe()
+func makeCfg(
+	replicas, clients int,
+	consensusImpl, crypto, leaderRotation string,
+	byzantine map[string][]uint32,
+	branchFactor uint32,
+	randomTree bool,
+	mods ...string,
+) *config.ExperimentConfig {
+	cfg := &config.ExperimentConfig{
+		Replicas:          replicas,
+		Clients:           clients,
+		TreePositions:     tree.DefaultTreePosUint32(replicas),
+		RandomTree:        randomTree,
+		BranchFactor:      branchFactor,
+		Consensus:         consensusImpl,
+		Crypto:            crypto,
+		LeaderRotation:    leaderRotation,
+		ByzantineStrategy: byzantine,
+		Modules:           mods,
 
-		workerProxy := orchestration.NewRemoteWorker(protostream.NewWriter(controllerStream), protostream.NewReader(controllerStream))
-		worker := orchestration.NewWorker(protostream.NewWriter(workerStream), protostream.NewReader(workerStream), metrics.NopLogger(), nil, 0)
+		// Common default values:
+		ReplicaHosts:      []string{"localhost"},
+		ClientHosts:       []string{"localhost"},
+		Duration:          5 * time.Second,
+		BatchSize:         100,
+		ConnectTimeout:    time.Second,
+		ViewTimeout:       100 * time.Millisecond,
+		DurationSamples:   1000,
+		TimeoutMultiplier: 1.2,
+		MaxConcurrent:     250,
+		PayloadSize:       100,
+		RateLimit:         math.Inf(1),
+		ClientTimeout:     500 * time.Millisecond,
+		TreeDelta:         30 * time.Millisecond,
+	}
+	if randomTree {
+		tree.Shuffle(cfg.TreePositions)
+	}
+	return cfg
+}
 
-		experiment := &orchestration.Experiment{
-			Logger:      logging.New("ctrl"),
-			NumReplicas: 4,
-			NumClients:  2,
-			ClientOpts: &orchestrationpb.ClientOpts{
-				ConnectTimeout: durationpb.New(time.Second),
-				MaxConcurrent:  250,
-				PayloadSize:    100,
-				RateLimit:      math.Inf(1),
-				Timeout:        durationpb.New(500 * time.Millisecond),
-			},
-			ReplicaOpts: &orchestrationpb.ReplicaOpts{
-				BatchSize:         100,
-				ConnectTimeout:    durationpb.New(time.Second),
-				InitialTimeout:    durationpb.New(100 * time.Millisecond),
-				TimeoutSamples:    1000,
-				TimeoutMultiplier: 1.2,
-				Consensus:         consensusImpl,
-				Crypto:            crypto,
-				LeaderRotation:    "round-robin",
-				Modules:           mods,
-			},
-			Duration: 5 * time.Second,
-			Hosts:    map[string]orchestration.RemoteWorker{"127.0.0.1": workerProxy},
-		}
+func run(t *testing.T, cfg *config.ExperimentConfig) {
+	t.Helper()
 
-		c := make(chan error)
-		go func() {
-			c <- worker.Run()
-		}()
+	controllerStream, workerStream := net.Pipe()
+	workerProxy := orchestration.NewRemoteWorker(protostream.NewWriter(controllerStream), protostream.NewReader(controllerStream))
+	worker := orchestration.NewWorker(protostream.NewWriter(workerStream), protostream.NewReader(workerStream), metrics.NopLogger(), nil, 0)
 
-		err := experiment.Run()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		err = <-c
-		if err != nil {
-			t.Fatal(err)
-		}
+	experiment, err := orchestration.NewExperiment(
+		cfg,
+		map[string]orchestration.RemoteWorker{"localhost": workerProxy},
+		logging.New("ctrl"),
+	)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	t.Run("ChainedHotStuff+ECDSA", func(t *testing.T) { run("chainedhotstuff", "ecdsa", nil) })
-	t.Run("ChainedHotStuff+BLS12", func(t *testing.T) { run("chainedhotstuff", "bls12", nil) })
-	t.Run("Fast-HotStuff+ECDSA", func(t *testing.T) { run("fasthotstuff", "ecdsa", nil) })
-	t.Run("Fast-HotStuff+BLS12", func(t *testing.T) { run("fasthotstuff", "bls12", nil) })
-	t.Run("Simple-HotStuff+ECDSA", func(t *testing.T) { run("simplehotstuff", "ecdsa", nil) })
-	t.Run("Simple-HotStuff+BLS12", func(t *testing.T) { run("simplehotstuff", "bls12", nil) })
+	c := make(chan error)
+	go func() {
+		c <- worker.Run()
+	}()
 
-	// handel
-	mods := []string{"handel"}
-	t.Run("ChainedHotStuff+ECDSA+Handel", func(t *testing.T) { run("chainedhotstuff", "ecdsa", mods) })
-	t.Run("ChainedHotStuff+BLS12+Handel", func(t *testing.T) { run("chainedhotstuff", "bls12", mods) })
-	t.Run("Fast-HotStuff+ECDSA+Handel", func(t *testing.T) { run("fasthotstuff", "ecdsa", mods) })
-	t.Run("Fast-HotStuff+BLS12+Handel", func(t *testing.T) { run("fasthotstuff", "bls12", mods) })
-	t.Run("Simple-HotStuff+ECDSA+Handel", func(t *testing.T) { run("simplehotstuff", "ecdsa", mods) })
-	t.Run("Simple-HotStuff+BLS12+Handel", func(t *testing.T) { run("simplehotstuff", "bls12", mods) })
+	if err = experiment.Run(); err != nil {
+		t.Fatal(err)
+	}
+	if err = <-c; err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestOrchestration(t *testing.T) {
+	fork := map[string][]uint32{"fork": {1}}
+	silence := map[string][]uint32{"silence": {1}}
+
+	tests := []struct {
+		consensus    string
+		crypto       string
+		byzantine    map[string][]uint32
+		mods         []string
+		replicas     int
+		branchFactor uint32
+		randomTree   bool
+	}{
+		{consensus: "chainedhotstuff", crypto: "ecdsa", replicas: 4},
+		{consensus: "chainedhotstuff", crypto: "eddsa", replicas: 4},
+		{consensus: "chainedhotstuff", crypto: "bls12", replicas: 4},
+		{consensus: "fasthotstuff", crypto: "ecdsa", replicas: 4},
+		{consensus: "fasthotstuff", crypto: "eddsa", replicas: 4},
+		{consensus: "fasthotstuff", crypto: "bls12", replicas: 4},
+		{consensus: "simplehotstuff", crypto: "ecdsa", replicas: 4},
+		{consensus: "simplehotstuff", crypto: "eddsa", replicas: 4},
+		{consensus: "simplehotstuff", crypto: "bls12", replicas: 4},
+		{consensus: "chainedhotstuff", crypto: "ecdsa", byzantine: fork, replicas: 4},
+		{consensus: "chainedhotstuff", crypto: "ecdsa", byzantine: silence, replicas: 4},
+		{consensus: "chainedhotstuff", crypto: "ecdsa", mods: []string{"kauri"}, replicas: 7, branchFactor: 2},
+		{consensus: "chainedhotstuff", crypto: "bls12", mods: []string{"kauri"}, replicas: 7, branchFactor: 2},
+		{consensus: "chainedhotstuff", crypto: "ecdsa", mods: []string{"kauri"}, replicas: 7, branchFactor: 2, randomTree: true},
+		{consensus: "chainedhotstuff", crypto: "bls12", mods: []string{"kauri"}, replicas: 7, branchFactor: 2, randomTree: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(test.Name([]string{"consensus", "crypto", "byzantine", "mods"}, tt.consensus, tt.crypto, tt.byzantine, tt.mods), func(t *testing.T) {
+			var leaderRotation string
+			if slices.Contains(tt.mods, "kauri") {
+				leaderRotation = "tree-leader"
+			} else {
+				leaderRotation = "round-robin"
+			}
+			cfg := makeCfg(
+				tt.replicas, 2,
+				tt.consensus,
+				tt.crypto,
+				leaderRotation,
+				tt.byzantine,
+				tt.branchFactor,
+				tt.randomTree,
+				tt.mods...,
+			)
+			run(t, cfg)
+		})
+	}
 }
 
 func TestDeployment(t *testing.T) {
@@ -93,32 +152,11 @@ func TestDeployment(t *testing.T) {
 		t.Skip("GitHub Actions only supports linux containers on linux runners.")
 	}
 
-	experiment := &orchestration.Experiment{
-		Logger:      logging.New("ctrl"),
-		NumReplicas: 4,
-		NumClients:  2,
-		ClientOpts: &orchestrationpb.ClientOpts{
-			ConnectTimeout: durationpb.New(time.Second),
-			MaxConcurrent:  250,
-			PayloadSize:    100,
-			RateLimit:      math.Inf(1),
-		},
-		ReplicaOpts: &orchestrationpb.ReplicaOpts{
-			BatchSize:         100,
-			ConnectTimeout:    durationpb.New(time.Second),
-			InitialTimeout:    durationpb.New(100 * time.Millisecond),
-			TimeoutSamples:    1000,
-			TimeoutMultiplier: 1.2,
-			Consensus:         "chainedhotstuff",
-			Crypto:            "ecdsa",
-			LeaderRotation:    "round-robin",
-		},
-		Duration: 10 * time.Second,
-		Hosts:    make(map[string]orchestration.RemoteWorker),
-	}
-
+	numReplicas := 4
+	numClients := 2
+	numHosts := numReplicas + numClients
 	exe := compileBinary(t)
-	g := iagotest.CreateSSHGroup(t, 4, true)
+	g := iagotest.CreateSSHGroup(t, numHosts, true)
 
 	sessions, err := orchestration.Deploy(g, orchestration.DeployConfig{
 		ExePath:  exe,
@@ -129,8 +167,10 @@ func TestDeployment(t *testing.T) {
 	}
 	var wg sync.WaitGroup
 	wg.Add(len(sessions))
+	workers := make(map[string]orchestration.RemoteWorker)
 	for host, session := range sessions {
-		experiment.Hosts[host] = orchestration.NewRemoteWorker(protostream.NewWriter(session.Stdin()), protostream.NewReader(session.Stdout()))
+		t.Logf("Added worker host: %s", host)
+		workers[host] = orchestration.NewRemoteWorker(protostream.NewWriter(session.Stdin()), protostream.NewReader(session.Stdout()))
 		go func(session orchestration.WorkerSession) {
 			_, err := io.Copy(os.Stderr, session.Stderr())
 			if err != nil {
@@ -139,8 +179,60 @@ func TestDeployment(t *testing.T) {
 			wg.Done()
 		}(session)
 	}
-	err = experiment.Run()
+
+	// Put all hostnames into a string list.
+	allHosts := make([]string, 0, numHosts)
+	for host := range workers {
+		allHosts = append(allHosts, host)
+	}
+
+	// Pop any hostname and add them to a separate list for replicas.
+	replicaHosts := make([]string, 0, numReplicas)
+	for range numReplicas {
+		popped := allHosts[0]
+		replicaHosts = append(replicaHosts, popped)
+		allHosts = allHosts[1:]
+	}
+
+	// Pop any hostname and add them to a separate list for clients.
+	clientHosts := make([]string, 0, numClients)
+	for range numClients {
+		popped := allHosts[0]
+		clientHosts = append(clientHosts, popped)
+		allHosts = allHosts[1:]
+	}
+	// Add all replica and client hostnames (that came from workers) separately
+	// to the config.
+	cfg := &config.ExperimentConfig{
+		Replicas:          numReplicas,
+		Clients:           numClients,
+		ReplicaHosts:      replicaHosts,
+		ClientHosts:       clientHosts,
+		Duration:          10 * time.Second,
+		ClientTimeout:     500 * time.Millisecond,
+		ConnectTimeout:    time.Second,
+		MaxConcurrent:     250,
+		PayloadSize:       100,
+		RateLimit:         math.Inf(1),
+		BatchSize:         100,
+		ViewTimeout:       100 * time.Millisecond,
+		DurationSamples:   1000,
+		TimeoutMultiplier: 1.2,
+		Consensus:         "chainedhotstuff",
+		Crypto:            "ecdsa",
+		LeaderRotation:    "round-robin",
+	}
+
+	experiment, err := orchestration.NewExperiment(
+		cfg,
+		workers,
+		logging.New("ctrl"),
+	)
 	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err = experiment.Run(); err != nil {
 		t.Fatal(err)
 	}
 	wg.Wait()

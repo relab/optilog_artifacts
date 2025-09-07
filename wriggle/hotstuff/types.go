@@ -137,17 +137,16 @@ type PartialCert struct {
 	signer    ID
 	signature QuorumSignature
 	blockHash Hash
-	time      time.Time
 }
 
 // NewPartialCert returns a new partial certificate.
-func NewPartialCert(signature QuorumSignature, blockHash Hash, time time.Time) PartialCert {
+func NewPartialCert(signature QuorumSignature, blockHash Hash) PartialCert {
 	var signer ID
 	signature.Participants().RangeWhile(func(i ID) bool {
 		signer = i
 		return false
 	})
-	return PartialCert{signer, signature, blockHash, time}
+	return PartialCert{signer, signature, blockHash}
 }
 
 // Signer returns the ID of the replica that created the certificate.
@@ -158,10 +157,6 @@ func (pc PartialCert) Signer() ID {
 // Signature returns the signature.
 func (pc PartialCert) Signature() QuorumSignature {
 	return pc.signature
-}
-
-func (pc PartialCert) Time() time.Time {
-	return pc.time
 }
 
 // BlockHash returns the hash of the block that was signed.
@@ -252,15 +247,14 @@ func (si SyncInfo) String() string {
 
 // QuorumCert (QC) is a certificate for a Block created by a quorum of partial certificates.
 type QuorumCert struct {
-	signature     QuorumSignature
-	view          View
-	hash          Hash
-	latencyVector []uint32
+	signature QuorumSignature
+	view      View
+	hash      Hash
 }
 
 // NewQuorumCert creates a new quorum cert from the given values.
-func NewQuorumCert(signature QuorumSignature, view View, hash Hash, latencyVector []uint32) QuorumCert {
-	return QuorumCert{signature, view, hash, latencyVector}
+func NewQuorumCert(signature QuorumSignature, view View, hash Hash) QuorumCert {
+	return QuorumCert{signature, view, hash}
 }
 
 // ToBytes returns a byte representation of the quorum certificate.
@@ -276,10 +270,6 @@ func (qc QuorumCert) ToBytes() []byte {
 // Signature returns the threshold signature.
 func (qc QuorumCert) Signature() QuorumSignature {
 	return qc.signature
-}
-
-func (qc QuorumCert) LatencyVector() []uint32 {
-	return qc.latencyVector
 }
 
 // BlockHash returns the hash of the block that was signed.
@@ -395,35 +385,6 @@ func writeParticipants(wr io.Writer, participants IDSet) (err error) {
 	return err
 }
 
-type ReconfigurationMsg struct {
-	QuorumSize        int
-	ActiveReplicas    []ID
-	View              View
-	QuorumCertificate QuorumCert
-}
-
-type Complaint struct {
-	ID               uint64
-	Complainee       ID
-	Complainant      ID
-	IsProofAvailable bool
-	IsVerified       bool
-	ComplaintType    int
-	Proof            any
-}
-
-const (
-	InvalidProposal   = 1
-	InvalidVote       = 2
-	InvalidQuorumCert = 3
-	InvalidComplaint  = 4
-	Suspicion         = 5
-)
-
-var Penalities = []int{
-	1, //InvalidProposal
-	1, //InvalidVote
-	1, //InvalidNewView
-	1, //InvalidComplaint
-	1, //Suspicion
+type ConsensusLatencyEvent struct {
+	Latency time.Duration
 }

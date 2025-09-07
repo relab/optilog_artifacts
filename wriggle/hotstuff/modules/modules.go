@@ -2,7 +2,6 @@ package modules
 
 import (
 	"context"
-	"time"
 
 	"github.com/relab/hotstuff"
 )
@@ -14,7 +13,7 @@ import (
 // CommandQueue is a queue of commands to be proposed.
 type CommandQueue interface {
 	// Get returns the next command to be proposed.
-	// It may run until the context is cancelled.
+	// It may run until the context is canceled.
 	// If no command is available, the 'ok' return value should be false.
 	Get(ctx context.Context) (cmd hotstuff.Command, ok bool)
 }
@@ -101,10 +100,6 @@ type Replica interface {
 	NewView(hotstuff.SyncInfo)
 	// Metadata returns the connection metadata sent by this replica.
 	Metadata() map[string]string
-	// Active returns if the replica is active or not
-	Active() bool
-	// SetActive() sets the replica status
-	SetActive(bool)
 }
 
 //go:generate mockgen -destination=../internal/mocks/configuration_mock.go -package=mocks . Configuration
@@ -119,54 +114,15 @@ type Configuration interface {
 	// Len returns the number of replicas in the configuration.
 	Len() int
 	// QuorumSize returns the size of a quorum.
-	QuorumSize(hotstuff.View) int
+	QuorumSize() int
 	// Propose sends the block to all replicas in the configuration.
 	Propose(proposal hotstuff.ProposeMsg)
 	// Timeout sends the timeout message to all replicas.
 	Timeout(msg hotstuff.TimeoutMsg)
-	// Update is the async broadcast from the leader to passive configuration.
-	Update(hotstuff.Block)
 	// Fetch requests a block from all the replicas in the configuration.
 	Fetch(ctx context.Context, hash hotstuff.Hash) (block *hotstuff.Block, ok bool)
 	// SubConfig returns a subconfiguration containing the replicas specified in the ids slice.
 	SubConfig(ids []hotstuff.ID) (sub Configuration, err error)
-	// Reconfiguration sends the reconfiguration message to all replicas.
-	Reconfiguration(hotstuff.ReconfigurationMsg)
-	// GetCommittees gets the committees
-	GetCommittees(size int, isPhase bool) map[int][]hotstuff.ID
-	// GetLatency gives the latency between two repicas.
-	GetLatency(sender hotstuff.ID, receiver hotstuff.ID) time.Duration
-}
-
-// Kauri module implements the Kauri protocol
-type Kauri interface {
-	Begin(s hotstuff.PartialCert, p hotstuff.ProposeMsg)
-}
-
-type Ranking interface {
-	// AddComplaint adds a complaint to the log.
-	AddComplaint(*hotstuff.Complaint)
-	// Get Pending complaints and add them to the proposal.
-	GetPendingComplaints() []*hotstuff.Complaint
-	// UpdateScore for a replica.
-	CommitComplaints([]*hotstuff.Complaint)
-	// VerifyComplaint verifies a complaint and return true if it is a genuine complaint.
-	VerifyComplaints([]*hotstuff.Complaint) bool
-	// // VerifyStateCheck verifies the hash of the complaint.
-	// GetRobustInternalNodes(nodeCount int) []hotstuff.ID
-	// //GetTopN gives the top n replicas based on the trust score.
-	// GetTopN(n int) ([]hotstuff.ID, bool)
-	// //GetScore gets the score of all replicas
-	// GetScore() map[hotstuff.ID]int
-	// //
-	// GetSuspicionMatrix() map[hotstuff.ID]map[hotstuff.ID]int
-	// //Get
-	// GetLeaderScore(hotstuff.ID) float64
-
-	// GetSuspectedNodes gets the suspected nodes and number of times it is suspected
-	GetSuspectedNodes() map[hotstuff.ID]int
-	// GetFaultyNodes returns the faulty nodes
-	GetFaultyNodes() []hotstuff.ID
 }
 
 //go:generate mockgen -destination=../internal/mocks/consensus_mock.go -package=mocks . Consensus
@@ -183,8 +139,6 @@ type Consensus interface {
 	CommittedBlock() *hotstuff.Block
 	// ChainLength returns the number of blocks that need to be chained together in order to commit.
 	ChainLength() int
-	//
-	Commit(block *hotstuff.Block)
 }
 
 // LeaderRotation implements a leader rotation scheme.
@@ -199,23 +153,13 @@ type LeaderRotation interface {
 type Synchronizer interface {
 	// AdvanceView attempts to advance to the next view using the given QC.
 	// qc must be either a regular quorum certificate, or a timeout certificate.
-	AdvanceView(hotstuff.SyncInfo, bool)
+	AdvanceView(hotstuff.SyncInfo)
 	// View returns the current view.
 	View() hotstuff.View
 	// HighQC returns the highest known QC.
 	HighQC() hotstuff.QuorumCert
 	// Start starts the synchronizer with the given context.
 	Start(context.Context)
-	// Pause pauses the synchronizer, only processes the update messages
-	Pause(qc hotstuff.QuorumCert)
-	// Resume resumes the synchronizer.
-	Resume(qc hotstuff.QuorumCert)
-}
-
-// Handel is an implementation of the Handel signature aggregation protocol.
-type Handel interface {
-	// Begin commissions the aggregation of a new signature.
-	Begin(s hotstuff.PartialCert)
 }
 
 // ExtendedExecutor turns the given Executor into an ExecutorExt.
@@ -254,4 +198,9 @@ func (fhw forkHandlerWrapper) InitModule(mods *Core) {
 
 func (fhw forkHandlerWrapper) Fork(block *hotstuff.Block) {
 	fhw.forkHandler.Fork(block.Command())
+}
+
+// Kauri module implements the Kauri protocol
+type Kauri interface {
+	Begin(s hotstuff.PartialCert, p hotstuff.ProposeMsg)
 }

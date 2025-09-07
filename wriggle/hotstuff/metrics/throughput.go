@@ -22,9 +22,9 @@ func init() {
 type Throughput struct {
 	metricsLogger Logger
 	opts          *modules.Options
-	configuration modules.Configuration
-	commitCount   uint64
-	commandCount  uint64
+
+	commitCount  uint64
+	commandCount uint64
 }
 
 // InitModule gives the module access to the other modules.
@@ -37,7 +37,6 @@ func (t *Throughput) InitModule(mods *modules.Core) {
 	mods.Get(
 		&t.metricsLogger,
 		&t.opts,
-		&t.configuration,
 		&eventLoop,
 		&logger,
 	)
@@ -47,9 +46,9 @@ func (t *Throughput) InitModule(mods *modules.Core) {
 		t.recordCommit(commitEvent.Commands)
 	})
 
-	eventLoop.RegisterObserver(types.TickEvent{}, func(event any) {
+	eventLoop.RegisterHandler(types.TickEvent{}, func(event any) {
 		t.tick(event.(types.TickEvent))
-	})
+	}, eventloop.Prioritize())
 
 	logger.Info("Throughput metric enabled")
 }
@@ -60,10 +59,6 @@ func (t *Throughput) recordCommit(commands int) {
 }
 
 func (t *Throughput) tick(tick types.TickEvent) {
-	replica, ok := t.configuration.Replica(t.opts.ID())
-	if ok && !replica.Active() {
-		return
-	}
 	now := time.Now()
 	event := &types.ThroughputMeasurement{
 		Event:    types.NewReplicaEvent(uint32(t.opts.ID()), now),

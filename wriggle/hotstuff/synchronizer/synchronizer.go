@@ -24,12 +24,11 @@ type Synchronizer struct {
 	leaderRotation modules.LeaderRotation
 	logger         logging.Logger
 	opts           *modules.Options
-	acceptor       modules.Acceptor
-	mut            sync.RWMutex // to protect the following
-	currentView    hotstuff.View
-	highTC         hotstuff.TimeoutCert
-	highQC         hotstuff.QuorumCert
-	ranking        modules.Ranking
+
+	mut         sync.RWMutex // to protect the following
+	currentView hotstuff.View
+	highTC      hotstuff.TimeoutCert
+	highQC      hotstuff.QuorumCert
 
 	// A pointer to the last timeout message that we sent.
 	// If a timeout happens again before we advance to the next view,
@@ -37,7 +36,7 @@ type Synchronizer struct {
 	lastTimeout *hotstuff.TimeoutMsg
 
 	duration ViewDuration
-	timer    *time.Timer
+	timer    oneShotTimer
 
 	// map of collected timeout messages per view
 	timeouts map[hotstuff.View]map[hotstuff.ID]hotstuff.TimeoutMsg
@@ -54,13 +53,10 @@ func (s *Synchronizer) InitModule(mods *modules.Core) {
 		&s.leaderRotation,
 		&s.logger,
 		&s.opts,
-		&s.acceptor,
-		&s.ranking,
 	)
 
 	s.eventLoop.RegisterHandler(TimeoutEvent{}, func(event any) {
 		timeoutView := event.(TimeoutEvent).View
-		//s.OnLocalTimeout()
 		if s.View() == timeoutView {
 			s.OnLocalTimeout()
 		}
@@ -74,11 +70,6 @@ func (s *Synchronizer) InitModule(mods *modules.Core) {
 	s.eventLoop.RegisterHandler(hotstuff.TimeoutMsg{}, func(event any) {
 		timeoutMsg := event.(hotstuff.TimeoutMsg)
 		s.OnRemoteTimeout(timeoutMsg)
-	})
-
-	s.eventLoop.RegisterHandler(hotstuff.Update{}, func(event any) {
-		update := event.(hotstuff.Update)
-		s.handleUpdateEvent(update.Block, update.QuorumSize)
 	})
 
 	var err error
@@ -98,17 +89,34 @@ func New(viewDuration ViewDuration) modules.Synchronizer {
 		currentView: 1,
 
 		duration: viewDuration,
-		timer:    time.AfterFunc(0, func() {}), // dummy timer that will be replaced after start() is called
+		timer:    oneShotTimer{time.AfterFunc(0, func() {})}, // dummy timer that will be replaced after start() is called
 
 		timeouts: make(map[hotstuff.View]map[hotstuff.ID]hotstuff.TimeoutMsg),
 	}
 }
 
+// A oneShotTimer is a timer that should not be reused.
+type oneShotTimer struct {
+	timerDoNotUse *time.Timer
+}
+
+func (t oneShotTimer) Stop() bool {
+	return t.timerDoNotUse.Stop()
+}
+
 func (s *Synchronizer) startTimeoutTimer() {
-	s.timer = time.AfterFunc(s.duration.Duration(), func() {
+	// Store the view in a local variable to avoid calling s.View() in the closure below,
+	// thus avoiding a data race.
+	view := s.View()
+	// It is important that the timer is NOT reused because then the view would be wrong.
+	s.timer = oneShotTimer{time.AfterFunc(s.duration.Duration(), func() {
 		// The event loop will execute onLocalTimeout for us.
-		s.eventLoop.AddEvent(TimeoutEvent{s.View()})
-	})
+		s.eventLoop.AddEvent(TimeoutEvent{view})
+	})}
+}
+
+func (s *Synchronizer) stopTimeoutTimer() {
+	s.timer.Stop()
 }
 
 // Start starts the synchronizer with the given context.
@@ -117,7 +125,7 @@ func (s *Synchronizer) Start(ctx context.Context) {
 
 	go func() {
 		<-ctx.Done()
-		s.timer.Stop()
+		s.stopTimeoutTimer()
 	}()
 
 	// start the initial proposal
@@ -150,16 +158,7 @@ func (s *Synchronizer) OnLocalTimeout() {
 	s.startTimeoutTimer()
 
 	view := s.View()
-	leader := s.leaderRotation.GetLeader(view)
-	if s.ranking != nil {
-		s.ranking.AddComplaint(&hotstuff.Complaint{
-			Complainee:       s.opts.ID(),
-			ComplaintType:    hotstuff.Suspicion,
-			IsProofAvailable: false,
-			Complainant:      leader,
-		})
-		//s.logger.Info("added a suspicion to the log")
-	}
+
 	if s.lastTimeout != nil && s.lastTimeout.View == view {
 		s.configuration.Timeout(*s.lastTimeout)
 		return
@@ -194,17 +193,13 @@ func (s *Synchronizer) OnLocalTimeout() {
 	s.consensus.StopVoting(view)
 
 	s.configuration.Timeout(timeoutMsg)
-	s.logger.Debug("Send the timeout message ", view)
 	s.OnRemoteTimeout(timeoutMsg)
 }
 
 // OnRemoteTimeout handles an incoming timeout from a remote replica.
 func (s *Synchronizer) OnRemoteTimeout(timeout hotstuff.TimeoutMsg) {
 	currView := s.View()
-	// qc, _ := timeout.SyncInfo.QC()
-	// if qc.View() == 0 {
-	// 	return
-	// }
+
 	defer func() {
 		// cleanup old timeouts
 		for view := range s.timeouts {
@@ -220,7 +215,7 @@ func (s *Synchronizer) OnRemoteTimeout(timeout hotstuff.TimeoutMsg) {
 	}
 	s.logger.Debug("OnRemoteTimeout: ", timeout)
 
-	s.AdvanceView(timeout.SyncInfo, false)
+	s.AdvanceView(timeout.SyncInfo)
 
 	timeouts, ok := s.timeouts[timeout.View]
 	if !ok {
@@ -232,7 +227,7 @@ func (s *Synchronizer) OnRemoteTimeout(timeout hotstuff.TimeoutMsg) {
 		timeouts[timeout.ID] = timeout
 	}
 
-	if len(timeouts) < s.configuration.QuorumSize(timeout.View) {
+	if len(timeouts) < s.configuration.QuorumSize() {
 		return
 	}
 
@@ -262,17 +257,17 @@ func (s *Synchronizer) OnRemoteTimeout(timeout hotstuff.TimeoutMsg) {
 
 	delete(s.timeouts, timeout.View)
 
-	s.AdvanceView(si, false)
+	s.AdvanceView(si)
 }
 
 // OnNewView handles an incoming consensus.NewViewMsg
 func (s *Synchronizer) OnNewView(newView hotstuff.NewViewMsg) {
-	s.AdvanceView(newView.SyncInfo, false)
+	s.AdvanceView(newView.SyncInfo)
 }
 
 // AdvanceView attempts to advance to the next view using the given QC.
 // qc must be either a regular quorum certificate, or a timeout certificate.
-func (s *Synchronizer) AdvanceView(syncInfo hotstuff.SyncInfo, isReconfig bool) {
+func (s *Synchronizer) AdvanceView(syncInfo hotstuff.SyncInfo) {
 	v := hotstuff.View(0)
 	timeout := false
 
@@ -323,11 +318,11 @@ func (s *Synchronizer) AdvanceView(syncInfo hotstuff.SyncInfo, isReconfig bool) 
 		}
 	}
 
-	if v < s.View() && !isReconfig {
+	if v < s.View() {
 		return
 	}
 
-	s.timer.Stop()
+	s.stopTimeoutTimer()
 
 	if !timeout {
 		s.duration.ViewSucceeded()
@@ -335,21 +330,17 @@ func (s *Synchronizer) AdvanceView(syncInfo hotstuff.SyncInfo, isReconfig bool) 
 
 	newView := v + 1
 
+	s.currentView = newView
+
 	s.lastTimeout = nil
 	s.duration.ViewStarted()
 
-	duration := s.duration.Duration()
-	//s.logger.Info("Duration of the view is ", s.duration.Duration())
-	if isReconfig {
-		s.currentView = newView + 1
-		s.timer.Reset(s.duration.StartTimeout())
-	} else {
-		s.currentView = newView
-		s.timer.Reset(duration)
-	}
+	s.startTimeoutTimer()
+
+	s.logger.Debugf("advanced to view %d", newView)
 	s.eventLoop.AddEvent(ViewChangeEvent{View: newView, Timeout: timeout})
+
 	leader := s.leaderRotation.GetLeader(newView)
-	//s.logger.Info(" advance to view ", s.currentView, leader)
 	if leader == s.opts.ID() {
 		s.consensus.Propose(syncInfo)
 	} else if replica, ok := s.configuration.Replica(leader); ok {
@@ -381,46 +372,6 @@ func (s *Synchronizer) updateHighTC(tc hotstuff.TimeoutCert) {
 	}
 }
 
-func (s *Synchronizer) Pause(qc hotstuff.QuorumCert) {
-	s.timer.Stop()
-	s.performCheckPoint(qc)
-}
-
-func (s *Synchronizer) Resume(qc hotstuff.QuorumCert) {
-	s.performCheckPoint(qc)
-	s.timer = time.AfterFunc(s.duration.Duration(), func() {
-		// The event loop will execute onLocalTimeout for us.
-		s.eventLoop.AddEvent(TimeoutEvent{View: s.currentView})
-	})
-	s.AdvanceView(hotstuff.NewSyncInfo().WithQC(qc), true)
-}
-
-func (s *Synchronizer) performCheckPoint(qc hotstuff.QuorumCert) {
-	// Check if the latest qc received from the reconfiguration request
-	// is higher than the qc we have seen.
-
-	currentHighQCView := s.highQC.View()
-
-	if currentHighQCView < s.highTC.View() {
-		currentHighQCView = s.highTC.View()
-	}
-	for currentHighQCView < qc.View()-1 {
-		block, ok := s.blockChain.Get(qc.BlockHash())
-		if !ok {
-			break
-		}
-		s.acceptor.Proposed(block.Command())
-		s.blockChain.Store(block)
-		currentHighQCView = block.QuorumCert().View()
-	}
-	// This should repeatedly committ the inner blocks.
-	block, ok := s.blockChain.Get(qc.BlockHash())
-	if ok {
-		s.consensus.Commit(block)
-	}
-	s.logger.Info("checkpoint completed", currentHighQCView, qc.View())
-}
-
 var _ modules.Synchronizer = (*Synchronizer)(nil)
 
 // ViewChangeEvent is sent on the eventloop whenever a view change occurs.
@@ -432,15 +383,4 @@ type ViewChangeEvent struct {
 // TimeoutEvent is sent on the eventloop when a local timeout occurs.
 type TimeoutEvent struct {
 	View hotstuff.View
-}
-
-func (s *Synchronizer) handleUpdateEvent(block *hotstuff.Block, quorumSize int) {
-	//if !s.crypto.VerifyQuorumCert(block.QuorumCert()) {
-	//	return
-	//}
-	s.logger.Debug("handling the update ", block.View())
-	s.blockChain.Store(block)
-	s.updateHighQC(block.QuorumCert())
-	s.currentView = block.QuorumCert().View() + 1
-	s.consensus.Commit(block)
 }

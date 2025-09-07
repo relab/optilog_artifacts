@@ -3,15 +3,16 @@ package hotstuffpb
 import (
 	"bytes"
 	"testing"
-	"time"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/relab/hotstuff"
 	"github.com/relab/hotstuff/modules"
 
-	"github.com/golang/mock/gomock"
 	"github.com/relab/hotstuff/crypto"
 	"github.com/relab/hotstuff/crypto/bls12"
 	"github.com/relab/hotstuff/internal/testutil"
+	"go.uber.org/mock/gomock"
 )
 
 func TestConvertPartialCert(t *testing.T) {
@@ -44,7 +45,7 @@ func TestConvertQuorumCert(t *testing.T) {
 	builders := testutil.CreateBuilders(t, ctrl, 4)
 	hl := builders.Build()
 
-	b1 := hotstuff.NewBlock(hotstuff.GetGenesis().Hash(), hotstuff.NewQuorumCert(nil, 0, hotstuff.GetGenesis().Hash(), make([]uint32, 0)), "", 1, 1, time.Now())
+	b1 := hotstuff.NewBlock(hotstuff.GetGenesis().Hash(), hotstuff.NewQuorumCert(nil, 0, hotstuff.GetGenesis().Hash()), "", 1, 1)
 
 	signatures := testutil.CreatePCs(t, b1, hl.Signers())
 
@@ -65,8 +66,8 @@ func TestConvertQuorumCert(t *testing.T) {
 }
 
 func TestConvertBlock(t *testing.T) {
-	qc := hotstuff.NewQuorumCert(nil, 0, hotstuff.Hash{}, make([]uint32, 0))
-	want := hotstuff.NewBlock(hotstuff.GetGenesis().Hash(), qc, "", 1, 1, time.Now())
+	qc := hotstuff.NewQuorumCert(nil, 0, hotstuff.Hash{})
+	want := hotstuff.NewBlock(hotstuff.GetGenesis().Hash(), qc, "", 1, 1)
 	pb := BlockToProto(want)
 	got := BlockFromProto(pb)
 
@@ -94,5 +95,29 @@ func TestConvertTimeoutCertBLS12(t *testing.T) {
 
 	if !signer.VerifyTimeoutCert(tc2) {
 		t.Fatal("Failed to verify timeout cert")
+	}
+}
+
+func TestTimeoutMsgFromProto_Issue129(t *testing.T) {
+	sig := &QuorumSignature{Sig: &QuorumSignature_ECDSASigs{ECDSASigs: &ECDSAMultiSignature{Sigs: []*ECDSASignature{}}}}
+	sync := &SyncInfo{QC: &QuorumCert{Sig: sig, Hash: []byte{1, 2, 3, 4}}}
+
+	tests := []struct {
+		name string
+		msg  *TimeoutMsg
+		want hotstuff.TimeoutMsg
+	}{
+		{name: "only-view", msg: &TimeoutMsg{View: 1}, want: hotstuff.TimeoutMsg{View: 1}},
+		{name: "only-sync-info", msg: &TimeoutMsg{SyncInfo: sync}, want: hotstuff.TimeoutMsg{SyncInfo: SyncInfoFromProto(sync)}},
+		{name: "only-msg-signature", msg: &TimeoutMsg{MsgSig: sig}, want: hotstuff.TimeoutMsg{MsgSignature: QuorumSignatureFromProto(sig)}},
+		{name: "only-view-signature", msg: &TimeoutMsg{ViewSig: sig}, want: hotstuff.TimeoutMsg{ViewSignature: QuorumSignatureFromProto(sig)}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := TimeoutMsgFromProto(tt.msg)
+			if diff := cmp.Diff(tt.want, got, cmpopts.IgnoreUnexported(hotstuff.SyncInfo{})); diff != "" {
+				t.Errorf("TimeoutMsgFromProto() mismatch (-want +got):\n%s", diff)
+			}
+		})
 	}
 }
