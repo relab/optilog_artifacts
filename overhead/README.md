@@ -13,6 +13,7 @@ Update the TOML configuration files by replacing occurrences of `bbchain` with t
 
 On the controller node, compile the HotStuff binary using the following commands:
 ```sh
+cd hotstuff
 make install
 make
 ```

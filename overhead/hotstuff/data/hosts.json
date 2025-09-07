@@ -1,0 +1,15 @@
+{
+	"HostsToReplicas": {
+		"localhost": [
+			1,
+			2,
+			3,
+			4
+		]
+	},
+	"HostsToClients": {
+		"localhost": [
+			1
+		]
+	}
+}
