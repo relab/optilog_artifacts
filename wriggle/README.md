@@ -32,7 +32,7 @@ To execute the experiment described in Figure 11, change the values in the files
 **Example command for a 21-node cluster:**
 
 ```sh
-./hotstuff run --cue config_73.cue --ssh-config ssh_config --leader-rotation tree-leader --tree-delta 1ms --client-timeout 150s --duration 120s --metrics throughput,consensus-latency --measurement-interval 1s --output output_data --max-concurrent 3000 --view-timeout 1s --modules kauri
+./hotstuff run --cue config_21.cue --ssh-config ssh_config --leader-rotation tree-leader --tree-delta 1ms --client-timeout 150s --duration 120s --metrics throughput,consensus-latency --measurement-interval 1s --output output_data --max-concurrent 3000 --view-timeout 1s --modules kauri
 ```
 
 #### Processing Experiment Results
