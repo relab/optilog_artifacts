@@ -13,10 +13,7 @@ For the final artifact submission, these two repositories have been incorporated
 ### Overview
 Each of the directories contains the README to explain the usage of the artifact.
 
-- Optitree contains the code and scripts required to perform the experiments described in figure 9 and 12. 
-
-- fig10_config contains the configuration file required to perform the experiments described in figure 10.
-
-- overhead contains the code to conduct the experiement described in figure 13.
-
-- wriggle contains the code to perform the experiement explained in figure 11. 
+- [Optitree](./optitree/README.md) contains the code and scripts required to perform the experiments described in figures 9 and 12.
+- [fig10_config](./fig10_config/README.md) contains the configuration file required to perform the experiments described in figure 10.
+- [overhead](./overhead/README.md) contains the code to conduct the experiment described in figure 13.
+- [wriggle](./wriggle/README.md) contains the code to perform the experiment explained in figure 11.
