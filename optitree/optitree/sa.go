@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"math/rand/v2"
 	"slices"
@@ -109,6 +110,7 @@ func (l Latencies) SimulatedAnnealing(params treeParams) result {
 			newSolution := mutate(tree, params.faultIndex)
 			nodes = newSolution.AsNodes()
 			latency := l.qcLatency(quorumSize, params.bf, nodes, (params.faultIndex > 0))
+			fmt.Println("sa latency", latency, "best", best.latency, "temp", params.temp)
 			if latency < best.latency {
 				tree = newSolution
 				best.latency = latency
@@ -167,7 +169,9 @@ func mutate(tree TreeConfig, faultIdx int) TreeConfig {
 func (l Latencies) SimulatedAnnealingPerformance(params treeParams) result {
 	results := make([]float64, params.iterations)
 	for i := range params.iterations {
-		results[i] = float64(l.ParallelSimulatedAnnealing(params).latency)
+		latency := l.ParallelSimulatedAnnealing(params).latency
+		fmt.Println("Running iteration", i, "latency", latency)
+		results[i] = float64(latency)
 	}
 	mean, stdDev := stat.MeanStdDev(results, nil)
 	return result{mean: mean, stdDev: stdDev}

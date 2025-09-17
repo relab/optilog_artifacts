@@ -1,8 +1,9 @@
 ### OptiLog Artifacts
 
-This repository contains the artifacts accompanying the paper titled **"OptiLog: Assigning Roles in Byzantine Consensus"**.  
+This repository contains the artifacts accompanying the paper titled **"OptiLog: Assigning Roles in Byzantine Consensus"**. 
 OptiLog offers a comprehensive framework for recording experimental measurements and utilizing them to compute optimized system configurations.
-This repository contains three primary artifacts utilized in the evaluation of OptiLog.
+This repository contains three primary artifacts utilized in the evaluation of OptiLog and its usecases.
+OptiLog is accepted at [Eurosys2026](https://2026.eurosys.org/index.html). 
 
 In addition to the contents of this repository, our evaluation also relies on artifacts from the following public repositories:
 - [HotStuff](https://github.com/relab/hotstuff)

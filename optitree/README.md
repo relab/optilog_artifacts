@@ -43,3 +43,4 @@ To conduct the OptiTree simulation experiments, follow these steps:
 4. **Plot Results**
 
     Use the latency values from the script outputs to generate the corresponding graphs.
+    Sample results from fig9 experiment is [here](optitree/sa_perf)

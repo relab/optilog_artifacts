@@ -7,7 +7,7 @@ We conducted experiments under 1 to 4 faults in the configuration with varying t
 
 #### Prerequisites
 
-Before proceeding, ensure that you have completed all setup steps outlined in `fig10_config/README.md`.
+Before proceeding, ensure that you have completed all setup steps outlined in [`fig10_config/README.md`](../fig10_config/README.md).
 This includes installing dependencies, configuring your environment, and preparing the required input files.
 Use config_21.cue to run this set of experiments. 
 
@@ -28,6 +28,7 @@ make
 #### Running the Experiment
 
 To execute the experiment described in Figure 11, change the values in the files mentioned above and recompile to build the new binary.
+We used Ubuntu 22.04 as the operating system on the nodes in the Cluster.
 
 **Example command for a 21-node cluster:**
 
@@ -38,3 +39,27 @@ To execute the experiment described in Figure 11, change the values in the files
 #### Processing Experiment Results
 
 Upon completion, experiment results will be available in the `output_data` directory. Use the `throughput_avg.py` and `latency_avg.py` scripts on the output data to compute throughput and latency metrics for the experiment.
+
+To run this script install the following dependencies
+
+```sh
+sudo apt install python3
+sudo apt install python3-pip    
+pip3 install python-dateutil
+```
+
+
+Run script to generate the results, (first 5 secs of experiment data is not considered)
+
+```sh
+python3 throughput_avg.py output_data 5
+python3 latency_avg.py output_data 5
+```
+
+These scripts calculate the average throughput and latency with 90% confidence interval bounds (upper and lower). 
+
+To generate complete results as shown in Figure 11:
+1. Execute this experiment with different wriggle room values.
+2. Use pgfplots to visualize the collected data
+
+Sample datasets from these experiments are available for download [here](wriggle_data.tgz).

@@ -1,7 +1,7 @@
 import subprocess
 import math
 
-iterations = 10
+iterations = 1000
 
 def config_size(bf):
     return int(math.pow(bf,2)+bf+1)

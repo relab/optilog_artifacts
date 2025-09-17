@@ -2,6 +2,7 @@
 
 This directory contains the necessary artifacts to conduct the OptiLog overhead experiments as presented in Figure 13.
 The experiments are organized into four variants, each enabling a specific set of OptiLog sensors.
+We used Ubuntu 22.04 as the operating system on the nodes in the Cluster.
 
 #### Prerequisites
 
@@ -29,4 +30,22 @@ To execute the experiment described in Figure 13, modify the `--config` paramete
 
 #### Processing Experiment Results
 
-Upon completion, experiment results will be available in the `output_data` directory. Use the `senddata.py` script on this output to compute the average proposal size.
+Upon completion, experiment results will be available in the `output_data` directory.
+Use the `senddata.py` script on this output to compute the average proposal size.
+
+To run this script, install python3.
+```sh
+sudo apt install python3
+```
+
+To generate the results from the experiment output
+
+```sh
+python3 senddata.py output_data
+```
+
+This script generates the average proposal size in the experiment. 
+
+Repeat the experiment for other configurations.
+
+Sample data from the experiments is [here](overhead_data.tgz)

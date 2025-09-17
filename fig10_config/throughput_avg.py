@@ -3,6 +3,8 @@ import sys
 import json
 import csv
 from dateutil.parser import isoparse
+import statistics
+import math
 
 
 def find_files(directory_name):
@@ -53,6 +55,18 @@ def readFromFiles(directory_name):
             result[timestamp] = sum(tmp_values)/len(tmp_values)
     return result
 
+def compute_mean(throughput_data):
+    data = list(throughput_data.values())
+    n = len(data)
+    mean = statistics.mean(data)
+    stdev = statistics.stdev(data)
+    
+    # standard error
+    sem = stdev / math.sqrt(n)
+    z = 1.96  # z-score for 95% confidence
+    margin = z * sem
+    return mean, mean - margin, mean + margin  
+
 def write_throughput_avg(directory_name, throughput_data, skip_count):
     header = ["time","commands"]
     with open(directory_name+'/throughput_avg.csv', 'w') as f:
@@ -71,3 +85,4 @@ if __name__ == '__main__':
         exit()
     throughput_data = readFromFiles(sys.argv[1])
     write_throughput_avg(sys.argv[1], throughput_data, sys.argv[2])
+    print(compute_mean(throughput_data))

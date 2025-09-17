@@ -46,4 +46,29 @@ Remove the `--modules` parameter if running the standard HotStuff protocol. For 
 
 #### Processing Experiment Results
 
-After the experiment completes, results are stored in the `output_data` directory. Use the `throughput_avg.py` and `latency_avg.py` scripts on the output data to compute throughput and latency metrics for the experiment.
+After the experiment completes, results are stored in the `output_data` directory.
+Use the `throughput_avg.py` and `latency_avg.py` scripts on the output data to compute throughput and latency metrics for the experiment.
+
+Install the following dependencies
+
+```sh
+sudo apt install python3
+sudo apt install python3-pip    
+pip3 install python-dateutil
+```
+
+Run script to generate the results, (first 5 secs of experiment data is not considered)
+
+```sh
+python3 throughput_avg.py output_data 5
+python3 latency_avg.py output_data 5
+```
+
+These scripts calculate the average throughput and latency with 90% confidence interval bounds (upper and lower). 
+
+To generate complete results as shown in Figure 10:
+1. Execute this experiment across all network configurations
+2. Test each configuration with all five protocol variants
+3. Use pgfplots to visualize the collected data
+
+Sample datasets from these experiments are available for download [here](fig_10_data.tgz).

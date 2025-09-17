@@ -1,0 +1,462 @@
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6416344935000
+Starting tree (size=21, bf=4): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20]
+Will emit every 6416344935000 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 100246.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6416344935000
+Starting tree (size=21, bf=4): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20]
+Will emit every 6416344935000 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 100246.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6416344935000
+Starting tree (size=21, bf=4): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20]
+Will emit every 6416344935000 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 100246.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6416344935000
+Starting tree (size=21, bf=4): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20]
+Will emit every 6416344935000 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 100246.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6416344935000
+Starting tree (size=21, bf=4): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20]
+Will emit every 6416344935000 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 100246.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 5247160870715681536
+Starting tree (size=31, bf=5): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]
+Will emit every 5247160870715681536 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 104640.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 5247160870715681536
+Starting tree (size=31, bf=5): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]
+Will emit every 5247160870715681536 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 104640.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 5247160870715681536
+Starting tree (size=31, bf=5): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]
+Will emit every 5247160870715681536 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 104640.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 5247160870715681536
+Starting tree (size=31, bf=5): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]
+Will emit every 5247160870715681536 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 104640.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 5247160870715681536
+Starting tree (size=31, bf=5): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]
+Will emit every 5247160870715681536 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 104640.000000, std dev: 0.000000
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7384884166835075072
+Starting tree (size=43, bf=6): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42]
+Will emit every 7384884166835075072 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 101428.048000, std dev: 658.718541
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7384884166835075072
+Starting tree (size=43, bf=6): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42]
+Will emit every 7384884166835075072 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 101059.822000, std dev: 439.691452
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7384884166835075072
+Starting tree (size=43, bf=6): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42]
+Will emit every 7384884166835075072 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 101049.078000, std dev: 446.743181
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7384884166835075072
+Starting tree (size=43, bf=6): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42]
+Will emit every 7384884166835075072 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 101058.132000, std dev: 440.706902
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7384884166835075072
+Starting tree (size=43, bf=6): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42]
+Will emit every 7384884166835075072 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 101020.068000, std dev: 465.084116
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: -6588232878073577472
+Starting tree (size=57, bf=7): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56]
+Will emit every -6588232878073577472 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 120696.632000, std dev: 5599.024934
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: -6588232878073577472
+Starting tree (size=57, bf=7): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56]
+Will emit every -6588232878073577472 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 108630.552000, std dev: 1618.484801
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: -6588232878073577472
+Starting tree (size=57, bf=7): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56]
+Will emit every -6588232878073577472 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 105560.538000, std dev: 961.278475
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: -6588232878073577472
+Starting tree (size=57, bf=7): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56]
+Will emit every -6588232878073577472 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 105610.142000, std dev: 975.938067
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: -6588232878073577472
+Starting tree (size=57, bf=7): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56]
+Will emit every -6588232878073577472 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 105579.506000, std dev: 967.525736
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 4290385101708125568
+Starting tree (size=73, bf=8): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72]
+Will emit every 4290385101708125568 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 169841.208000, std dev: 17122.830322
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 4290385101708125568
+Starting tree (size=73, bf=8): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72]
+Will emit every 4290385101708125568 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 141659.022000, std dev: 7143.153652
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 4290385101708125568
+Starting tree (size=73, bf=8): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72]
+Will emit every 4290385101708125568 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 122428.442000, std dev: 2127.670850
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 4290385101708125568
+Starting tree (size=73, bf=8): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72]
+Will emit every 4290385101708125568 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 118901.536000, std dev: 696.639536
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 4290385101708125568
+Starting tree (size=73, bf=8): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72]
+Will emit every 4290385101708125568 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 118961.438000, std dev: 740.218608
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 1236954854073499648
+Starting tree (size=91, bf=9): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90]
+Will emit every 1236954854073499648 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 169510.518000, std dev: 23998.494471
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 1236954854073499648
+Starting tree (size=91, bf=9): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90]
+Will emit every 1236954854073499648 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 141619.922000, std dev: 10675.567069
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 1236954854073499648
+Starting tree (size=91, bf=9): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90]
+Will emit every 1236954854073499648 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 119466.914000, std dev: 3573.627600
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 1236954854073499648
+Starting tree (size=91, bf=9): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90]
+Will emit every 1236954854073499648 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 109011.774000, std dev: 1800.034434
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 1236954854073499648
+Starting tree (size=91, bf=9): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90]
+Will emit every 1236954854073499648 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 108934.938000, std dev: 1856.659306
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7850571952011739136
+Starting tree (size=111, bf=10): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110]
+Will emit every 7850571952011739136 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 231843.084000, std dev: 22817.029532
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7850571952011739136
+Starting tree (size=111, bf=10): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110]
+Will emit every 7850571952011739136 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 215019.990000, std dev: 22560.950792
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7850571952011739136
+Starting tree (size=111, bf=10): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110]
+Will emit every 7850571952011739136 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 178167.698000, std dev: 15743.735659
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7850571952011739136
+Starting tree (size=111, bf=10): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110]
+Will emit every 7850571952011739136 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 137563.488000, std dev: 4594.511365
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 7850571952011739136
+Starting tree (size=111, bf=10): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110]
+Will emit every 7850571952011739136 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 122723.504000, std dev: 1892.738993
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 8196525844068302848
+Starting tree (size=133, bf=11): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132]
+Will emit every 8196525844068302848 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 245441.974000, std dev: 20042.729510
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 8196525844068302848
+Starting tree (size=133, bf=11): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132]
+Will emit every 8196525844068302848 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 230912.436000, std dev: 19079.356479
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 8196525844068302848
+Starting tree (size=133, bf=11): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132]
+Will emit every 8196525844068302848 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 206748.378000, std dev: 14766.345434
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 8196525844068302848
+Starting tree (size=133, bf=11): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132]
+Will emit every 8196525844068302848 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 163085.026000, std dev: 8297.155810
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 8196525844068302848
+Starting tree (size=133, bf=11): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132]
+Will emit every 8196525844068302848 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 128616.914000, std dev: 2255.478631
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 766304138878255104
+Starting tree (size=157, bf=12): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156]
+Will emit every 766304138878255104 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 254941.830000, std dev: 20847.531136
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 766304138878255104
+Starting tree (size=157, bf=12): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156]
+Will emit every 766304138878255104 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 240852.504000, std dev: 20480.235872
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 766304138878255104
+Starting tree (size=157, bf=12): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156]
+Will emit every 766304138878255104 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 219534.506000, std dev: 18892.801467
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 766304138878255104
+Starting tree (size=157, bf=12): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156]
+Will emit every 766304138878255104 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 177165.296000, std dev: 10581.784043
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 766304138878255104
+Starting tree (size=157, bf=12): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156]
+Will emit every 766304138878255104 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 130950.516000, std dev: 4099.067657
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 2552790434594160640
+Starting tree (size=183, bf=13): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182]
+Will emit every 2552790434594160640 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 264465.326000, std dev: 23679.801145
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 2552790434594160640
+Starting tree (size=183, bf=13): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182]
+Will emit every 2552790434594160640 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 253855.272000, std dev: 23297.478084
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 2552790434594160640
+Starting tree (size=183, bf=13): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182]
+Will emit every 2552790434594160640 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 235113.282000, std dev: 21851.311758
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 2552790434594160640
+Starting tree (size=183, bf=13): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182]
+Will emit every 2552790434594160640 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 190845.488000, std dev: 10398.400575
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 2552790434594160640
+Starting tree (size=183, bf=13): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182]
+Will emit every 2552790434594160640 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 152903.482000, std dev: 5151.351804
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6268824167320125440
+Starting tree (size=211, bf=14): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210]
+Will emit every 6268824167320125440 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 250ms
+
+Simulated annealing performance: mean: 270900.388000, std dev: 22325.827583
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6268824167320125440
+Starting tree (size=211, bf=14): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210]
+Will emit every 6268824167320125440 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 500ms
+
+Simulated annealing performance: mean: 269492.488000, std dev: 20630.999259
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6268824167320125440
+Starting tree (size=211, bf=14): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210]
+Will emit every 6268824167320125440 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 1s
+
+Simulated annealing performance: mean: 250804.158000, std dev: 18106.323674
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6268824167320125440
+Starting tree (size=211, bf=14): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210]
+Will emit every 6268824167320125440 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 2s
+
+Simulated annealing performance: mean: 218127.010000, std dev: 12824.083023
+Loading latencies from: latencies/wonderproxy.csv
+Number of CPUs: 12
+Number of trees expected: 6268824167320125440
+Starting tree (size=211, bf=14): [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210]
+Will emit every 6268824167320125440 trees for a total of 1 emit events
+Running simulated annealing with 1000 iterations, timer duration: 4s
+
+Simulated annealing performance: mean: 173206.304000, std dev: 4754.722554
+Completed simulated annealing for4s with branch factor 4 
+
+Completed simulated annealing for4s with branch factor 5 
+
+Completed simulated annealing for4s with branch factor 6 
+
+Completed simulated annealing for4s with branch factor 7 
+
+Completed simulated annealing for4s with branch factor 8 
+
+Completed simulated annealing for4s with branch factor 9 
+
+Completed simulated annealing for4s with branch factor 10 
+
+Completed simulated annealing for4s with branch factor 11 
+
+Completed simulated annealing for4s with branch factor 12 
+
+Completed simulated annealing for4s with branch factor 13 
+
+Completed simulated annealing for4s with branch factor 14 
+

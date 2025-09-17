@@ -3,6 +3,8 @@ import sys
 import json
 import csv
 from dateutil.parser import isoparse
+import statistics
+import math
 
 
 def find_files(directory_name):
@@ -64,9 +66,22 @@ def write_latency_avg(directory_name, latency_data, skip_count):
                 continue
             writer.writerow([count, latency_data[key]])
 
+def compute_mean(latency):
+    data = list(latency.values())
+    n = len(data)
+    mean = statistics.mean(data)
+    stdev = statistics.stdev(data)
+    
+    # standard error
+    sem = stdev / math.sqrt(n)
+    z = 1.96  # z-score for 95% confidence
+    margin = z * sem
+    return mean, mean - margin, mean + margin  
+
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print("usage: python latency_avg.py inputDirectory skipCount")
         exit()
     latency_data = readFromFiles(sys.argv[1])
     write_latency_avg(sys.argv[1], latency_data, sys.argv[2])
+    print(compute_mean(latency_data))
