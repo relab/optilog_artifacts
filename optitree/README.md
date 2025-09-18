@@ -1,11 +1,11 @@
 ### OptiTree Simulation Experiments
 
-Optitree simulation experiments are described in Figure 9 and Figure 12. 
-These experiments are run on the a laptop with 16 GB RAM and 12 cores running Ubuntu 22.04 operating system.
+OptiTree simulation experiments are described in Figure 9 and Figure 12. 
+These experiments are run on a laptop with 16 GB RAM and 12 cores running Ubuntu 22.04 operating system.
 
 #### Build OptiTree binary
 
-Run the following command to build optitree binary
+Run the following command to build the OptiTree binary
 
 ```sh
 cd optitree;
@@ -40,7 +40,10 @@ To conduct the OptiTree simulation experiments, follow these steps:
     python3 fig12_run.py
     ```
 
+    The results generated from the experiment take less than 1MB disk space on the machine it is running.
+
 4. **Plot Results**
 
     Use the latency values from the script outputs to generate the corresponding graphs.
-    Sample results from fig9 experiment is [here](optitree/sa_perf)
+    Sample results from the fig9 experiment are [here](optitree/sa_perf)
+

@@ -1,7 +1,7 @@
 ### HotStuff Framework Experiments
 
 The experiments described in Figure 10 use the [HotStuff repository](https://github.com/relab/hotstuff). These experiments are designed to run on a cluster, with each node hosting one or more replicas.
-We used Ubuntu 22.04 as the operating system on the nodes in the Cluster.
+We used Ubuntu 22.04 as the operating system on the nodes in the cluster.
 These experiments utilize four distinct network configurations, with each configuration evaluated under five different protocol settings. For each experiment, the average throughput and latency are measured, and results are reported along with the 95% confidence interval.
 
 #### Prerequisites
@@ -34,7 +34,6 @@ make
 
 #### Running the Experiment
 
-
 To run the experiment described in Figure 10, adjust the `--cue` parameter based on the desired cluster size.
 Remove the `--modules` parameter if running the standard HotStuff protocol. For HotStuff with round-robin leader rotation, use `--leader-rotation round-robin`.
 
@@ -57,7 +56,7 @@ sudo apt install python3-pip
 pip3 install python-dateutil
 ```
 
-Run script to generate the results, (first 5 secs of experiment data is not considered)
+Run script to generate the results, (first 5 seconds of experiment data is not considered)
 
 ```sh
 python3 throughput_avg.py output_data 5
@@ -71,4 +70,7 @@ To generate complete results as shown in Figure 10:
 2. Test each configuration with all five protocol variants
 3. Use pgfplots to visualize the collected data
 
+Each experiment is run for 120 seconds and measurements for first 5 seconds are discarded.
+This experiment consumes 1.5MB of disk space on the controller node and on other nodes in the cluster negligible disk space is taken at `/tmp/`.
 Sample datasets from these experiments are available for download [here](fig_10_data.tgz).
+

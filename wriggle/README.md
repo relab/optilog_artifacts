@@ -62,4 +62,6 @@ To generate complete results as shown in Figure 11:
 1. Execute this experiment with different wriggle room values.
 2. Use pgfplots to visualize the collected data
 
+Each experiment is run for 120 seconds and measurements for first 5 seconds are discarded.
+This experiment consumes 1.5MB of disk space on the controller node and on other nodes in the cluster negligible disk space is taken at `/tmp/`.
 Sample datasets from these experiments are available for download [here](wriggle_data.tgz).
