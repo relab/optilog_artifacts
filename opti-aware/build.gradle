@@ -1,0 +1,213 @@
+plugins {
+    id 'java'
+    id 'distribution'
+    id 'org.hidetake.ssh' version '2.10.1'
+}
+
+group 'BFT-SMaRt'
+version '2.0'
+
+compileJava {
+    sourceCompatibility = 8
+    targetCompatibility = 8
+}
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    archivesBaseName='BFT-SMaRt'
+    project.version=""
+}
+
+ssh.settings {
+    fileTransfer = 'scp'
+}
+
+remotes {
+    master {
+        host = '192.168.12.211'
+        user = 'cb'
+        //password = '<password>'
+        identity=file('../../.ssh/cb')
+    }
+}
+
+task remoteDeploy(dependsOn: installDist) {
+    doLast {
+        def fileSeparator = System.getProperty("file.separator")
+        def src = project.buildDir.name + fileSeparator + "install" + fileSeparator + project.name
+        def target = '~/'
+        ssh.run {
+            session(remotes.master) {
+                put from: src, into: target
+            }
+        }
+    }
+}
+
+task remoteDeploySource(dependsOn: installDist) {
+    doLast {
+        def fileSeparator = System.getProperty("file.separator")
+        def src = "src"
+        def target = '~/tool/library/'
+        ssh.run {
+            session(remotes.master) {
+                put from: src, into: target
+            }
+        }
+    }
+}
+
+task localDeploy(dependsOn: installDist) {
+    doLast {
+        int nServers = 5
+        int nClients = 1
+
+        def fileSeparator = System.getProperty("file.separator")
+        def src = project.buildDir.name + fileSeparator + "install" + fileSeparator + project.name
+        def workingDirectory = project.buildDir.name + fileSeparator + "local" + fileSeparator
+
+        println ("Deploying project into ${workingDirectory}")
+
+        for (i in 0..<nServers) {
+            def target = workingDirectory + "rep${i}"
+            copy {
+                from src
+                into target
+            }
+        }
+
+        for (i in 0..<nClients) {
+            def target = workingDirectory + "cli${i}"
+            copy {
+                from src
+                into target
+            }
+        }
+    }
+}
+
+task setupIntegrationTestingEnvironment(dependsOn: installDist) {
+    doFirst {
+        int nServers = 5
+        int nClients = 1
+
+        def fileSeparator = System.getProperty("file.separator")
+        def src = project.buildDir.name + fileSeparator + "install" + fileSeparator + project.name
+        def workingDirectory = project.buildDir.name + fileSeparator + "integration" + fileSeparator
+        copy {
+            from src + fileSeparator + "lib"
+            into workingDirectory + fileSeparator + "lib"
+        }
+        copy {
+            from project.projectDir.absolutePath + fileSeparator + "config" + fileSeparator + "benchmark.config"
+            into workingDirectory
+        }
+
+        for (i in 0..<nServers) {
+            def target = workingDirectory + "rep${i}"
+            copy {
+                from src
+                into target
+            }
+        }
+
+        for (i in 0..<nClients) {
+            def target = workingDirectory + "cli${i}"
+            copy {
+                from src
+                into target
+            }
+        }
+    }
+}
+
+task recoveryIntegrationTest(type: JavaExec, dependsOn: setupIntegrationTestingEnvironment) {
+    int nServers = 4
+    int nClients = 1
+    def fileSeparator = System.getProperty("file.separator")
+    String workingDirectory = project.buildDir.absolutePath + fileSeparator + "integration" + fileSeparator
+    classpath = sourceSets.main.runtimeClasspath
+    args(workingDirectory, nServers, nClients)
+    mainClass = 'bftsmart.tests.recovery.RecoveryTest'
+}
+
+distributions {
+    main {
+        contents {
+            into('config') {
+                from 'config'
+            }
+            into('lib') {
+                from jar
+                from(configurations.runtimeClasspath)
+            }
+            from 'runscripts/smartrun.sh'
+            from 'runscripts/smartrun.cmd'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree('lib'){include '*.jar'}
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.69'
+
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
+
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation 'commons-codec:commons-codec:1.15'
+
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+    implementation 'ch.qos.logback:logback-core:1.2.5'
+
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    implementation 'ch.qos.logback:logback-classic:1.2.5'
+
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    implementation 'io.netty:netty-all:4.1.67.Final'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+
+    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core
+    implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.2'
+
+    implementation 'org.jgrapht:jgrapht-core:1.5.2'
+}
+
+// --- Linux-only compile of libptp.so into build/install/library/lib ---
+if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
+    def ptpDir    = file("src/main/java/bftsmart/optilog/PrecisionClock")
+    def nativeOut = file("$buildDir/install/library/lib")
+    def outSo     = new File(nativeOut, "libptp.so")
+
+    tasks.register('compilePtp', Exec) {
+        workingDir ptpDir
+        doFirst { nativeOut.mkdirs() }
+        executable "gcc"
+        args "-shared",
+                "-o", outSo.absolutePath,
+                "-fPIC",
+                "ptp_time.c",
+                "-I${System.getenv('JAVA_HOME') ?: '/usr/lib/jvm/java-11-openjdk-amd64'}/include",
+                "-I${System.getenv('JAVA_HOME') ?: '/usr/lib/jvm/java-11-openjdk-amd64'}/include/linux",
+                "-lc"
+        inputs.file(new File(ptpDir, "ptp_time.c"))
+        outputs.file(outSo)
+    }
+
+    // hook into lifecycle
+    tasks.named('build') { dependsOn 'compilePtp' }
+    tasks.withType(JavaExec).configureEach {
+        dependsOn 'compilePtp'
+        jvmArgs("-Djava.library.path=${nativeOut.absolutePath}")
+    }
+    tasks.withType(Test).configureEach {
+        dependsOn 'compilePtp'
+        jvmArgs("-Djava.library.path=${nativeOut.absolutePath}")
+    }
+}

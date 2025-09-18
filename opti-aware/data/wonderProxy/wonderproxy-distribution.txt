@@ -1,0 +1,4 @@
+Distritbution Info of replicas and clients:
+
+replicas: ['Paris': 1, 'Barcelona': 1, 'Amsterdam': 1, 'Reykjavik': 1, 'Dublin': 1, 'Vienna': 1, 'Frankfurt': 1, 'Zurich': 1, 'Lisbon': 1, 'Helsinki': 1, 'Bergen': 1, 'Manchester': 1, 'Nuremberg': 1, 'Venice': 1, 'Hamburg': 1, 'Belfast': 1, 'Athens': 1, 'Luxembourg': 1, 'Thessaloniki': 1,'Dallas': 1, 'NewYork': 1, 'SanJose': 1, 'Seattle': 1, 'Fremont': 1, 'LosAngeles': 1, 'Houston': 1,  'Montreal': 1, 'Minneapolis': 1, 'SanDiego': 1, 'LasVegas': 1, 'Mexico': 1, 'Manhattan': 1, 'Toronto': 1, 'Singapore': 1, 'Malaysia': 1, 'Jakarta': 1, 'Hanoi': 1, 'Istanbul': 1, 'HongKong': 1, 'TelAviv': 1, 'Taipei': 1, 'Seoul': 1, 'Tokyo': 1, 'Brisbane': 1, 'Sydney': 1, 'Wellington': 1, 'CapeTown': 1, 'Fez': 1, 'SaoPaulo': 1, 'Lima': 1, 'Medellin': 1]
+clients: ['Melbourne': 1, 'LosAngeles': 1, 'Tokyo': 1, 'Amsterdam': 1, 'Frankfurt': 1, 'NewYork': 1, 'CapeTown': 1, 'SaoPaulo': 1, 'Cairo': 1, 'Istanbul': 1, 'Paris': 1, 'Montreal': 1]

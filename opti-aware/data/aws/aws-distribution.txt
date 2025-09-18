@@ -1,0 +1,2 @@
+Distribution Info:
+There was 1 replica and 1 client in each region
