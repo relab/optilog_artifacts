@@ -1,0 +1,34 @@
+{
+	"clang-format.style": "{ IndentWidth: 2, BasedOnStyle: google, AlignConsecutiveAssignments: true, ColumnLimit: 120 }",
+	"editor.formatOnSave": true,
+	"files.insertFinalNewline": true,
+	"protoc": {
+		"compile_on_save": false,
+		"options": [
+			"--proto_path=${workspaceRoot}/",
+			"--proto_path=${env.GOPATH}/pkg/mod/github.com/relab/gorums@v0.7.1-0.20220307181651-94a8af8e467c",
+		]
+	},
+	"go.lintTool": "golangci-lint",
+	"go.lintFlags": [
+		"--fast",
+	],
+	"go.testFlags": [
+		"-count=1"
+	],
+	"cSpell.enabled": true,
+	"cSpell.ignorePaths": [
+		"package-lock.json",
+		"node_modules",
+		"vscode-extension",
+		".git/{info,lfs,logs,refs,objects}/**",
+		".git/{index,*refs,*HEAD}",
+		".vscode",
+		".vscode-insiders",
+		"go.mod",
+		"go.sum",
+		"**/**/latency_matrix.go",
+		"**/**/*.csv",
+		"**/**/*.pb.go"
+	]
+}

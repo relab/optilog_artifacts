@@ -1,6 +1,8 @@
 ### HotStuff Framework Experiments
 
-The experiments described in Figure 10 use the [HotStuff repository](https://github.com/relab/hotstuff). These experiments are designed to run on a cluster, with each node hosting one or more replicas.
+The experiments described in Figure 10 use the [HotStuff repository](https://github.com/relab/hotstuff).
+For long term availability we cloned the repo [here](hotstuff). 
+These experiments are designed to run on a cluster, with each node hosting one or more replicas.
 We used Ubuntu 22.04 as the operating system on the nodes in the cluster.
 These experiments utilize four distinct network configurations, with each configuration evaluated under five different protocol settings. For each experiment, the average throughput and latency are measured, and results are reported along with the 95% confidence interval.
 
